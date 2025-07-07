@@ -149,21 +149,55 @@ fig_bb.update_layout(
 st.plotly_chart(fig_bb)
 
 
-# Benenne Spalten passend um
-df_sn.columns = ['Land', 'Jahr', 'Braunkohle_GWh']
 
-# Filtere auf Sachsen
-df_sachsen = df_sn[df_sn['Land'] == 'Sachsen'].copy()
+# Daten für Sachsen – bereinigt aus deiner Datei (in TWh)
+data_sn = {
+    'Jahr': [
+        1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+        2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
+        2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+        2019, 2020, 2021, 2022
+    ],
+    'Braunkohle_TWh': [
+        40.43, 34.09, 32.94, 33.40, 32.39, 30.43, 29.54, 28.78, 27.61, 25.77, 25.33,
+        24.26, 25.89, 26.89, 26.59, 25.10, 26.55, 26.46, 26.13, 21.39,
+        23.97, 25.59, 25.25, 25.31, 26.39, 26.61, 24.85, 22.80, 21.94,
+        18.83, 19.42, 19.74, 17.20
+    ]
+}
 
-# Konvertiere Spalten
-df_sachsen['Jahr'] = pd.to_numeric(df_sachsen['Jahr'], errors='coerce').astype('Int64')
-df_sachsen['Braunkohle_GWh'] = pd.to_numeric(df_sachsen['Braunkohle_GWh'], errors='coerce')
+df_sn = pd.DataFrame(data_sn)
 
-# Entferne fehlende Werte
-df_sachsen = df_sachsen.dropna(subset=['Jahr', 'Braunkohle_GWh'])
+# Visualisierung für Sachsen
+st.subheader("📉 Bruttostromerzeugung aus Braunkohle – Sachsen")
+st.markdown("Ziel: **0 TWh bis spätestens 2038** gemäß Kohleausstiegsgesetz.")
 
-# Umrechnung in TWh
-df_sachsen['Braunkohle_TWh'] = df_sachsen['Braunkohle_GWh'] / 1000
+fig_sn = go.Figure()
 
-# Zeige bereinigte Daten
-import ace_tools as tools; tools.display_dataframe_to_user(name="Braunkohle Sachsen Bruttostrom", dataframe=df_sachsen[['Jahr', 'Braunkohle_TWh']])
+fig_sn.add_trace(go.Scatter(
+    x=df_sn['Jahr'],
+    y=df_sn['Braunkohle_TWh'],
+    mode='lines+markers',
+    name='Sachsen – Braunkohle',
+    line=dict(color='indigo')
+))
+
+# Zielpunkt für 2038
+fig_sn.add_trace(go.Scatter(
+    x=[2038],
+    y=[0],
+    mode='markers+text',
+    name='Ziel 2038',
+    marker=dict(color='green', size=12),
+    text=["Ziel: 0 TWh"],
+    textposition='top center'
+))
+
+fig_sn.update_layout(
+    title='Bruttostromerzeugung aus Braunkohle in Sachsen (1990–2022)',
+    xaxis_title='Jahr',
+    yaxis_title='TWh',
+    showlegend=True
+)
+
+st.plotly_chart(fig_sn)
