@@ -201,3 +201,57 @@ fig_sn.update_layout(
 )
 
 st.plotly_chart(fig_sn)
+
+
+
+# Daten für Sachsen-Anhalt – bereinigt aus deiner Datei (in TWh)
+data_st = {
+    'Jahr': [
+        1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+        2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+        2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+        2018, 2019, 2020, 2021, 2022
+    ],
+    'Braunkohle_TWh': [
+        4.83, 3.48, 2.18, 2.24, 2.18, 2.36, 2.31, 2.36, 2.25,
+        2.26, 2.18, 2.33, 2.28, 2.15, 2.04, 2.15, 2.18, 2.01,
+        1.78, 2.03, 2.08, 2.02, 1.99, 1.89, 1.87, 1.79, 1.72,
+        1.58, 1.59, 1.28, 1.36, 1.15
+    ]
+}
+
+df_st = pd.DataFrame(data_st)
+
+# Visualisierung für Sachsen-Anhalt
+st.subheader("📉 Bruttostromerzeugung aus Braunkohle – Sachsen-Anhalt")
+st.markdown("Ziel: **0 TWh bis spätestens 2038** laut Kohleausstiegsgesetz.")
+
+fig_st = go.Figure()
+
+fig_st.add_trace(go.Scatter(
+    x=df_st['Jahr'],
+    y=df_st['Braunkohle_TWh'],
+    mode='lines+markers',
+    name='Sachsen-Anhalt – Braunkohle',
+    line=dict(color='darkorange')
+))
+
+# Zielpunkt für 2038
+fig_st.add_trace(go.Scatter(
+    x=[2038],
+    y=[0],
+    mode='markers+text',
+    name='Ziel 2038',
+    marker=dict(color='green', size=12),
+    text=["Ziel: 0 TWh"],
+    textposition='top center'
+))
+
+fig_st.update_layout(
+    title='Bruttostromerzeugung aus Braunkohle in Sachsen-Anhalt (1991–2022)',
+    xaxis_title='Jahr',
+    yaxis_title='TWh',
+    showlegend=True
+)
+
+st.plotly_chart(fig_st)
