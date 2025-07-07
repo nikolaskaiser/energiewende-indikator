@@ -96,3 +96,54 @@ fig2.update_layout(
 )
 
 st.plotly_chart(fig2)
+
+
+# Daten für Brandenburg (aus deiner Datei bereinigt, in TWh)
+data_bb = {
+    'Jahr': [
+        2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
+        2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+        2019, 2020, 2021, 2022
+    ],
+    'Braunkohle_TWh': [
+        34.67, 35.85, 35.67, 33.92, 35.04, 33.48, 28.90, 32.89,
+        32.32, 30.76, 28.51, 30.54, 29.81, 26.69, 25.59, 24.71,
+        22.91, 19.44, 20.47, 17.95
+    ]
+}
+
+df_bb = pd.DataFrame(data_bb)
+
+# Visualisierung
+st.subheader("📉 Bruttostromerzeugung aus Braunkohle – Brandenburg")
+st.markdown("Ziel: Reduktion auf **0 TWh bis spätestens 2038** laut Kohleausstiegsgesetz.")
+
+fig_bb = go.Figure()
+
+fig_bb.add_trace(go.Scatter(
+    x=df_bb['Jahr'],
+    y=df_bb['Braunkohle_TWh'],
+    mode='lines+markers',
+    name='Brandenburg – Braunkohle',
+    line=dict(color='darkblue')
+))
+
+# Zielpunkt für 2038 (0 TWh)
+fig_bb.add_trace(go.Scatter(
+    x=[2038],
+    y=[0],
+    mode='markers+text',
+    name='Ziel 2038',
+    marker=dict(color='green', size=12),
+    text=["Ziel: 0 TWh"],
+    textposition='top center'
+))
+
+fig_bb.update_layout(
+    title='Bruttostromerzeugung aus Braunkohle in Brandenburg (2003–2022)',
+    xaxis_title='Jahr',
+    yaxis_title='TWh',
+    showlegend=True
+)
+
+st.plotly_chart(fig_bb)
