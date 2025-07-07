@@ -147,3 +147,23 @@ fig_bb.update_layout(
 )
 
 st.plotly_chart(fig_bb)
+
+
+# Benenne Spalten passend um
+df_sn.columns = ['Land', 'Jahr', 'Braunkohle_GWh']
+
+# Filtere auf Sachsen
+df_sachsen = df_sn[df_sn['Land'] == 'Sachsen'].copy()
+
+# Konvertiere Spalten
+df_sachsen['Jahr'] = pd.to_numeric(df_sachsen['Jahr'], errors='coerce').astype('Int64')
+df_sachsen['Braunkohle_GWh'] = pd.to_numeric(df_sachsen['Braunkohle_GWh'], errors='coerce')
+
+# Entferne fehlende Werte
+df_sachsen = df_sachsen.dropna(subset=['Jahr', 'Braunkohle_GWh'])
+
+# Umrechnung in TWh
+df_sachsen['Braunkohle_TWh'] = df_sachsen['Braunkohle_GWh'] / 1000
+
+# Zeige bereinigte Daten
+import ace_tools as tools; tools.display_dataframe_to_user(name="Braunkohle Sachsen Bruttostrom", dataframe=df_sachsen[['Jahr', 'Braunkohle_TWh']])
