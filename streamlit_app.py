@@ -255,3 +255,96 @@ fig_st.update_layout(
 )
 
 st.plotly_chart(fig_st)
+
+
+
+
+# ----------------------------
+# Alle Daten als Dictionary
+# ----------------------------
+region_data = {
+    'Nordrhein-Westfalen': {
+        'Jahr': list(range(1990, 2023)),
+        'Braunkohle_TWh': [
+            72.8, 75.3, 77.8, 73.5, 75.3, 71.9, 73.0, 74.2, 75.4, 74.5, 74.7, 70.9, 73.8, 74.0, 73.1,
+            71.2, 75.5, 74.3, 75.4, 66.5, 70.3, 73.6, 72.2, 70.4, 72.0, 75.0, 69.4, 66.5, 65.0, 52.3,
+            41.5, 46.1, 38.3
+        ],
+        'Zieljahr': 2030
+    },
+    'Brandenburg': {
+        'Jahr': list(range(2003, 2023)),
+        'Braunkohle_TWh': [
+            34.67, 35.85, 35.67, 33.92, 35.04, 33.48, 28.90, 32.89,
+            32.32, 30.76, 28.51, 30.54, 29.81, 26.69, 25.59, 24.71,
+            22.91, 19.44, 20.47, 17.95
+        ],
+        'Zieljahr': 2038
+    },
+    'Sachsen': {
+        'Jahr': list(range(1990, 2023)),
+        'Braunkohle_TWh': [
+            40.43, 34.09, 32.94, 33.40, 32.39, 30.43, 29.54, 28.78, 27.61, 25.77, 25.33,
+            24.26, 25.89, 26.89, 26.59, 25.10, 26.55, 26.46, 26.13, 21.39,
+            23.97, 25.59, 25.25, 25.31, 26.39, 26.61, 24.85, 22.80, 21.94,
+            18.83, 19.42, 19.74, 17.20
+        ],
+        'Zieljahr': 2038
+    },
+    'Sachsen-Anhalt': {
+        'Jahr': list(range(1991, 2023)),
+        'Braunkohle_TWh': [
+            4.83, 3.48, 2.18, 2.24, 2.18, 2.36, 2.31, 2.36, 2.25,
+            2.26, 2.18, 2.33, 2.28, 2.15, 2.04, 2.15, 2.18, 2.01,
+            1.78, 2.03, 2.08, 2.02, 1.99, 1.89, 1.87, 1.79, 1.72,
+            1.58, 1.59, 1.28, 1.36, 1.15
+        ],
+        'Zieljahr': 2038
+    }
+}
+
+# ----------------------------
+# Streamlit UI
+# ----------------------------
+st.subheader("📊 Vergleich: Braunkohlestromerzeugung nach Bundesland")
+selected_region = st.selectbox("Wähle ein Bundesland", list(region_data.keys()))
+
+# Daten auswählen
+region = region_data[selected_region]
+df = pd.DataFrame({
+    'Jahr': region['Jahr'],
+    'Braunkohle_TWh': region['Braunkohle_TWh']
+})
+zieljahr = region['Zieljahr']
+
+# ----------------------------
+# Plotly-Grafik
+# ----------------------------
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(
+    x=df['Jahr'],
+    y=df['Braunkohle_TWh'],
+    mode='lines+markers',
+    name=f'{selected_region} – Braunkohle'
+))
+
+fig.add_trace(go.Scatter(
+    x=[zieljahr],
+    y=[0],
+    mode='markers+text',
+    name=f'Ziel {zieljahr}',
+    marker=dict(color='green', size=12),
+    text=[f"Ziel: 0 TWh"],
+    textposition='top center'
+))
+
+fig.update_layout(
+    title=f'Bruttostromerzeugung aus Braunkohle – {selected_region}',
+    xaxis_title='Jahr',
+    yaxis_title='TWh',
+    showlegend=True
+)
+
+st.plotly_chart(fig)
+
