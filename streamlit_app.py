@@ -446,3 +446,41 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
+
+
+
+import streamlit as st
+
+st.subheader("🧭 Politisches Commitment zum Kohleausstieg")
+
+st.markdown("Die folgenden Meilensteine zeigen die zentralen politischen Entscheidungen zum Braunkohleausstieg in Deutschland.")
+
+with st.expander("🟠 2018 – Einsetzung der Kohlekommission"):
+    st.markdown("""
+    - Die Bundesregierung richtet die **„Kommission für Wachstum, Strukturwandel und Beschäftigung“** ein.
+    - Ziel: Einen breiten gesellschaftlichen Konsens über den Ausstieg aus der Kohleverstromung erreichen.
+    - Beteiligte: Politik, Wirtschaft, Wissenschaft, Umweltverbände, Gewerkschaften.
+    """)
+
+with st.expander("🟢 2019 – Empfehlung: Ausstieg bis spätestens 2038"):
+    st.markdown("""
+    - Die Kommission legt ihren Abschlussbericht vor.
+    - Empfiehlt einen **Kohleausstieg bis spätestens 2038**, möglichst **bis 2035**.
+    - Vorgesehen: **Strukturhilfen in Höhe von 40 Milliarden Euro** für die betroffenen Regionen.
+    """)
+
+with st.expander("⚖️ 2020 – Kohleausstiegsgesetz verabschiedet"):
+    st.markdown("""
+    - Der Bundestag beschließt das **Kohleausstiegsgesetz**.
+    - Verankert die schrittweise **Stilllegung aller Braun- und Steinkohlekraftwerke bis 2038**.
+    - Enthält Vereinbarungen mit Betreibern, Entschädigungen und einen Abschaltfahrplan.
+    """)
+
+with st.expander("📉 2022 – NRW steigt bis 2030 aus (RWE-Vereinbarung)"):
+    st.markdown("""
+    - Das Bundeswirtschaftsministerium, die Landesregierung NRW und **RWE** einigen sich:
+        - Braunkohleausstieg in **NRW wird auf 2030 vorgezogen**
+        - **Fünf Dörfer** am Tagebau Garzweiler bleiben erhalten
+        - Gleichzeitig: Einige Kraftwerksblöcke dürfen wegen Energiekrise **länger laufen**
+    - Kein vergleichbares Commitment in Brandenburg, Sachsen oder Sachsen-Anhalt bisher.
+    """)
