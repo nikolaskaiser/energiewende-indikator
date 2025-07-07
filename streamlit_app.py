@@ -349,6 +349,10 @@ fig.update_layout(
 st.plotly_chart(fig)
 
 
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+
 # ----------------------------
 # Alle Daten
 # ----------------------------
@@ -428,9 +432,17 @@ for region in selected_regions:
         y=[0],
         mode='markers+text',
         marker=dict(size=10, color='green'),
-        text=[f"{region_info['Zieljahr']} Ziel_]()
+        text=[f"{region_info['Zieljahr']} Ziel"],
+        textposition='top center',
+        showlegend=False
+    ))
 
+fig.update_layout(
+    title='Bruttostromerzeugung aus Braunkohle im Vergleich',
+    xaxis_title='Jahr',
+    yaxis_title='TWh',
+    legend_title='Bundesland',
+    height=600
 )
 
 st.plotly_chart(fig)
-
