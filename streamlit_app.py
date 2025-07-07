@@ -344,7 +344,9 @@ fig.update_layout(
     xaxis_title='Jahr',
     yaxis_title='TWh',
     showlegend=True
+)
 
+st.plotly_chart(fig)
 
 
 # ----------------------------
