@@ -484,3 +484,81 @@ with st.expander("📉 2022 – NRW steigt bis 2030 aus (RWE-Vereinbarung)"):
         - Gleichzeitig: Einige Kraftwerksblöcke dürfen wegen Energiekrise **länger laufen**
     - Kein vergleichbares Commitment in Brandenburg, Sachsen oder Sachsen-Anhalt bisher.
     """)
+
+
+
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+
+# ----------- Daten einlesen (angepasst an deine Excel-Struktur) -----------
+df = pd.read_excel("lak-download (4).xlsx", sheet_name="LAK", skiprows=5)
+df.columns = ['Land', 'Jahr', 'EE_Anteil_Prozent']
+df = df.dropna(subset=['Land', 'Jahr', 'EE_Anteil_Prozent'])
+df['Jahr'] = pd.to_numeric(df['Jahr'], errors='coerce').astype('Int64')
+df['EE_Anteil_Prozent'] = pd.to_numeric(df['EE_Anteil_Prozent'], errors='coerce')
+
+# ----------- Optional: Länderspezifische Ziele manuell ergänzen -----------
+# Format: 'Bundesland': (Zielwert in %, Zieljahr)
+laenderziele = {
+    "Brandenburg": (100, 2020),
+    "Schleswig-Holstein": (300, 2030),
+    "Baden-Württemberg": (80, 2040),
+    "Thüringen": (65, 2040),
+    "Sachsen": (50, 2030),
+    "Niedersachsen": (100, 2040),
+    "Nordrhein-Westfalen": (None, None),  # kein offizielles Ziel
+}
+
+# ----------- Streamlit UI -----------
+st.subheader("📈 Erneuerbare-Energien-Anteil am Bruttostromverbrauch")
+selected = st.selectbox("Wähle ein Bundesland", sorted(df["Land"].unique()))
+
+# Filtere Daten für das gewählte Bundesland
+df_land = df[df["Land"] == selected]
+
+# ----------- Plotly-Visualisierung -----------
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(
+    x=df_land["Jahr"],
+    y=df_land["EE_Anteil_Prozent"],
+    mode="lines+markers",
+    name=f"{selected} – EE-Anteil",
+    line=dict(color='seagreen')
+))
+
+# Bundesziel EEG 2030 (fix)
+fig.add_trace(go.Scatter(
+    x=[2030],
+    y=[80],
+    mode="markers+text",
+    name="EEG-Ziel 2030",
+    marker=dict(color='blue', size=12),
+    text=["EEG 2030: 80 %"],
+    textposition="top center"
+))
+
+# Optional: Länderspezifisches Ziel
+ziel = laenderziele.get(selected)
+if ziel and ziel[0] is not None:
+    fig.add_trace(go.Scatter(
+        x=[ziel[1]],
+        y=[ziel[0]],
+        mode="markers+text",
+        name="Länderziel",
+        marker=dict(color='orange', size=12),
+        text=[f"{ziel[1]}: {ziel[0]} %"],
+        textposition="top center"
+    ))
+
+fig.update_layout(
+    title=f"Anteil Erneuerbarer Energien – {selected}",
+    xaxis_title="Jahr",
+    yaxis_title="Anteil (%)",
+    yaxis_range=[0, max(100, df_land['EE_Anteil_Prozent'].max() + 20)],
+    showlegend=True,
+    height=600
+)
+
+st.plotly_chart(fig)
