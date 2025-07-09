@@ -104,19 +104,71 @@ regionen = list(region_data.keys())
 selected_region = st.selectbox("Wähle ein Bundesland oder 'Deutschland gesamt'", ["Deutschland gesamt"] + regionen)
 
 if selected_region == "Deutschland gesamt":
-    # Alle Daten zusammenführen
-    df_gesamt = pd.DataFrame()
+    # Neue offizielle Daten für Deutschland (2019–2024)
+    df = pd.DataFrame({
+        "Jahr": [2019, 2020, 2021, 2022, 2023, 2024],
+        "Bruttostrom_TWh": [608.2, 574.7, 587.1, 577.9, 511.3, 497.3],
+        "Braunkohle_TWh": [114.0, 91.7, 110.1, 116.2, 86.3, 79.2],
+    })
+    df["Braunkohle_Anteil_%"] = (df["Braunkohle_TWh"] / df["Bruttostrom_TWh"]) * 100
+    zieljahr = 2038
 
-    for region, data in region_data.items():
-        df_region = pd.DataFrame({
-            'Jahr': data['Jahr'],
-            'Braunkohle_TWh': data['Braunkohle_TWh']
-        })
-        df_gesamt = pd.concat([df_gesamt, df_region], ignore_index=True)
+    fig = go.Figure()
 
-    # Nach Jahr gruppieren und summieren
-    df = df_gesamt.groupby("Jahr", as_index=False).sum()
-    zieljahr = 2038  # gesetzliches Endziel
+    # Balken für TWh
+    fig.add_trace(go.Bar(
+        x=df["Jahr"],
+        y=df["Braunkohle_TWh"],
+        name="Braunkohle-Strom (TWh)",
+        marker_color="firebrick",
+        yaxis="y1"
+    ))
+
+    # Linie für Anteil %
+    fig.add_trace(go.Scatter(
+        x=df["Jahr"],
+        y=df["Braunkohle_Anteil_%"],
+        mode="lines+markers",
+        name="Braunkohle-Anteil (%)",
+        line=dict(color="royalblue", width=3, dash="dash"),
+        yaxis="y2"
+    ))
+
+    # Zielmarke
+    fig.add_trace(go.Scatter(
+        x=[zieljahr],
+        y=[0],
+        mode="markers+text",
+        name=f"Ziel {zieljahr}",
+        marker=dict(color="green", size=12),
+        text=["Ziel: 0 TWh"],
+        textposition="top center",
+        yaxis="y1"
+    ))
+
+    # Layout mit zwei y-Achsen
+    fig.update_layout(
+        title="Braunkohlestrom in Deutschland – absolut & relativ",
+        xaxis=dict(title="Jahr"),
+        yaxis=dict(
+            title="Braunkohle-Strom (TWh)",
+            side="left",
+            showgrid=False
+        ),
+        yaxis2=dict(
+            title="Anteil Braunkohle (%)",
+            overlaying="y",
+            side="right",
+            showgrid=False,
+            range=[0, max(df["Braunkohle_Anteil_%"]) + 5]
+        ),
+        barmode='group',
+        legend=dict(x=0.01, y=1.1, orientation="h"),
+        height=600
+    )
+
+    st.plotly_chart(fig)
+
 else:
     region = region_data[selected_region]
     df = pd.DataFrame({
