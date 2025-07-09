@@ -104,57 +104,68 @@ regionen = list(region_data.keys())
 selected_region = st.selectbox("Wähle ein Bundesland oder 'Deutschland gesamt'", ["Deutschland gesamt"] + regionen)
 
 if selected_region == "Deutschland gesamt":
-    # Alle Daten zusammenführen
-    df_gesamt = pd.DataFrame()
-
-    for region, data in region_data.items():
-        df_region = pd.DataFrame({
-            'Jahr': data['Jahr'],
-            'Braunkohle_TWh': data['Braunkohle_TWh']
-        })
-        df_gesamt = pd.concat([df_gesamt, df_region], ignore_index=True)
-
-    # Nach Jahr gruppieren und summieren
-    df = df_gesamt.groupby("Jahr", as_index=False).sum()
-    zieljahr = 2038  # gesetzliches Endziel
-else:
-    region = region_data[selected_region]
+    # Neue offizielle Daten für Deutschland (2019–2024)
     df = pd.DataFrame({
-        'Jahr': region['Jahr'],
-        'Braunkohle_TWh': region['Braunkohle_TWh']
+        "Jahr": [2019, 2020, 2021, 2022, 2023, 2024],
+        "Bruttostrom_TWh": [608.2, 574.7, 587.1, 577.9, 511.3, 497.3],
+        "Braunkohle_TWh": [114.0, 91.7, 110.1, 116.2, 86.3, 79.2],
     })
-    zieljahr = region['Zieljahr']
+    df["Braunkohle_Anteil_%"] = (df["Braunkohle_TWh"] / df["Bruttostrom_TWh"]) * 100
+    zieljahr = 2038  # Zieljahr bleibt gleich
 
-# ----------------------------
-# Plotly-Grafik
-# ----------------------------
-fig = go.Figure()
+    # Dual-Axis Diagramm (nur für Deutschland)
+    fig = go.Figure()
 
-fig.add_trace(go.Scatter(
-    x=df['Jahr'],
-    y=df['Braunkohle_TWh'],
-    mode='lines+markers',
-    name=f'{selected_region} – Braunkohle'
-))
+    # Linke Achse: TWh
+    fig.add_trace(go.Scatter(
+        x=df['Jahr'],
+        y=df['Braunkohle_TWh'],
+        mode='lines+markers',
+        name='Braunkohle-Strom (TWh)',
+        line=dict(color="firebrick"),
+        yaxis="y1"
+    ))
 
-fig.add_trace(go.Scatter(
-    x=[zieljahr],
-    y=[0],
-    mode='markers+text',
-    name=f'Ziel {zieljahr}',
-    marker=dict(color='green', size=12),
-    text=[f"Ziel: 0 TWh"],
-    textposition='top center'
-))
+    # Rechte Achse: Anteil %
+    fig.add_trace(go.Scatter(
+        x=df['Jahr'],
+        y=df['Braunkohle_Anteil_%'],
+        mode='lines+markers',
+        name='Braunkohle-Anteil (%)',
+        line=dict(color="royalblue", dash="dash"),
+        yaxis="y2"
+    ))
 
-fig.update_layout(
-    title=f'Bruttostromerzeugung aus Braunkohle – {selected_region}',
-    xaxis_title='Jahr',
-    yaxis_title='TWh',
-    showlegend=True
-)
+    # Zielmarke
+    fig.add_trace(go.Scatter(
+        x=[zieljahr],
+        y=[0],
+        mode='markers+text',
+        name=f'Ziel {zieljahr}',
+        marker=dict(color='green', size=12),
+        text=[f"Ziel: 0 TWh"],
+        textposition='top center',
+        yaxis="y1"
+    ))
 
-st.plotly_chart(fig)
+    fig.update_layout(
+        title="Braunkohlestrom in Deutschland – absolut & relativ",
+        xaxis=dict(title="Jahr"),
+        yaxis=dict(
+            title="Braunkohle-Strom (TWh)",
+            side="left"
+        ),
+        yaxis2=dict(
+            title="Anteil Braunkohle (%)",
+            overlaying="y",
+            side="right"
+        ),
+        legend=dict(x=0.01, y=1.15, orientation="h"),
+        height=600
+    )
+
+    st.plotly_chart(fig)
+
 
 
 import streamlit as st
