@@ -1,5 +1,0 @@
-streamlit
-pandas
-plotly
-openpyxl  # wichtig für Excel-Import
-
