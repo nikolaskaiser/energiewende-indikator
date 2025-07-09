@@ -370,3 +370,68 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
+
+
+
+# ----------------------------
+# 📉 CO₂-Emissionen Stromerzeugung pro Bundesland
+# ----------------------------
+
+import pandas as pd
+import plotly.graph_objects as go
+
+st.header("♻️ CO₂-Emissionen der Stromerzeugung (Ländervergleich)")
+st.markdown("Quelle: LAK-Daten. Einheit: kg CO₂ pro GJ Stromerzeugung.")
+
+# Excel einlesen (die Datei muss im gleichen Ordner liegen!)
+df_co2 = pd.read_excel("co2_strom_lak.xlsx", sheet_name="LAK", skiprows=5)
+df_co2.columns = ["Land", "Jahr", "CO2_kg_per_GJ"]
+df_co2 = df_co2.dropna(subset=["Land", "Jahr", "CO2_kg_per_GJ"])
+df_co2["Jahr"] = pd.to_numeric(df_co2["Jahr"], errors="coerce").astype("Int64")
+df_co2["CO2_kg_per_GJ"] = pd.to_numeric(df_co2["CO2_kg_per_GJ"], errors="coerce")
+
+# Auswahlfeld inkl. Deutschland-Ansicht
+laender = sorted(df_co2["Land"].unique())
+dropdown_options = ["Deutschland gesamt"] + laender
+wahl = st.selectbox("Wähle ein Bundesland oder Gesamtansicht", dropdown_options)
+
+# Daten für Auswahl
+if wahl == "Deutschland gesamt":
+    df_plot = df_co2.groupby("Jahr", as_index=False)["CO2_kg_per_GJ"].mean()
+    name = "Deutschland gesamt – Ø CO₂ pro GJ"
+else:
+    df_plot = df_co2[df_co2["Land"] == wahl]
+    name = f"{wahl} – CO₂ pro GJ"
+
+# Plot erstellen
+fig_co2 = go.Figure()
+
+fig_co2.add_trace(go.Scatter(
+    x=df_plot["Jahr"],
+    y=df_plot["CO2_kg_per_GJ"],
+    mode="lines+markers",
+    name=name,
+    line=dict(color='crimson')
+))
+
+# Zielmarke für 2035: CO₂ = 0 (Netto-Null-Stromsektor)
+fig_co2.add_trace(go.Scatter(
+    x=[2035],
+    y=[0],
+    mode='markers+text',
+    name='EEG-Ziel 2035',
+    marker=dict(color='green', size=12),
+    text=["Ziel: klimaneutral"],
+    textposition='top center'
+))
+
+fig_co2.update_layout(
+    title=f"CO₂-Intensität der Stromerzeugung – {wahl}",
+    xaxis_title="Jahr",
+    yaxis_title="kg CO₂ pro GJ",
+    yaxis_range=[0, max(200, df_plot['CO2_kg_per_GJ'].max() + 10)],
+    height=600,
+    showlegend=True
+)
+
+st.plotly_chart(fig_co2)
