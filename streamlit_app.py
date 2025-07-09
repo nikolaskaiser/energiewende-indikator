@@ -100,15 +100,30 @@ region_data = {
 # Streamlit UI
 # ----------------------------
 st.subheader("📊 Vergleich: Braunkohlestromerzeugung nach Bundesland")
-selected_region = st.selectbox("Wähle ein Bundesland", list(region_data.keys()))
+regionen = list(region_data.keys())
+selected_region = st.selectbox("Wähle ein Bundesland oder 'Deutschland gesamt'", ["Deutschland gesamt"] + regionen)
 
-# Daten auswählen
-region = region_data[selected_region]
-df = pd.DataFrame({
-    'Jahr': region['Jahr'],
-    'Braunkohle_TWh': region['Braunkohle_TWh']
-})
-zieljahr = region['Zieljahr']
+if selected_region == "Deutschland gesamt":
+    # Alle Daten zusammenführen
+    df_gesamt = pd.DataFrame()
+
+    for region, data in region_data.items():
+        df_region = pd.DataFrame({
+            'Jahr': data['Jahr'],
+            'Braunkohle_TWh': data['Braunkohle_TWh']
+        })
+        df_gesamt = pd.concat([df_gesamt, df_region], ignore_index=True)
+
+    # Nach Jahr gruppieren und summieren
+    df = df_gesamt.groupby("Jahr", as_index=False).sum()
+    zieljahr = 2038  # gesetzliches Endziel
+else:
+    region = region_data[selected_region]
+    df = pd.DataFrame({
+        'Jahr': region['Jahr'],
+        'Braunkohle_TWh': region['Braunkohle_TWh']
+    })
+    zieljahr = region['Zieljahr']
 
 # ----------------------------
 # Plotly-Grafik
