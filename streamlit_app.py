@@ -257,7 +257,7 @@ fig.update_layout(
     xaxis_title='Jahr',
     yaxis=dict(
         title='TWh',
-        range=[0, max(df_deutschland['Braunkohle_TWh'].max(), 80)]  # optional feste Obergrenze
+        range=[0, None]  # optional feste Obergrenze
     ),
     yaxis2=dict(
         title='Anteil Braunkohle (%)',
