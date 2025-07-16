@@ -255,13 +255,17 @@ if show_deutschland:
 fig.update_layout(
     title='Bruttostromerzeugung aus Braunkohle im Vergleich',
     xaxis_title='Jahr',
-    yaxis=dict(title='TWh'),
+    yaxis=dict(
+        title='TWh',
+        range=[0, max(df_deutschland['Braunkohle_TWh'].max(), 80)]  # optional feste Obergrenze
+    ),
     yaxis2=dict(
-    title='Anteil Braunkohle (%)',
-    overlaying='y',
-    side='right',
-    range=[0, 100]  # 👈 fest auf 0–100%
-),
+        title='Anteil Braunkohle (%)',
+        overlaying='y',
+        side='right',
+        range=[0, 100],
+        anchor='x'  # wichtig: an dieselbe x-Achse koppeln
+    ),
     legend_title='Legende',
     height=600
 )
