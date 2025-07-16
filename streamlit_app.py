@@ -153,6 +153,8 @@ df_deutschland = pd.DataFrame({
     'Jahr': list(deutschland_braunkohle.keys()),
     'Braunkohle_TWh': list(deutschland_braunkohle.values())
 })
+# Nur bis einschließlich 2022 anzeigen
+df_deutschland = df_deutschland[df_deutschland['Jahr'] <= 2022]
 
 # ----------------------------
 # Streamlit UI
