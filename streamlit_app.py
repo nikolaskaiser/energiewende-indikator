@@ -52,7 +52,7 @@ if menu == "Indikator":
 elif menu == "Politisches Commitment":
     st.title("🗳️ Politisches Commitment")
 
-    st.markdown("Die folgenden Meilensteine zeigen die zentralen politischen Entscheidungen zum Braunkohleausstieg in Deutschland.")
+    st.markdown("Die folgenden Meilensteine zeigen die zentralen politischen Entscheidungen zur Energiewende, insb. Braunkohleausstieg in Deutschland.")
     
     with st.expander("🟠 2018 – Einsetzung der Kohlekommission"):
         st.markdown("""
