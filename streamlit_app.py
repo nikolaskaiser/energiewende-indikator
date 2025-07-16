@@ -205,6 +205,7 @@ for region in selected_regions:
         y=df['Braunkohle_TWh'],
         mode='lines+markers',
         name=region
+        line=dict(color=farbe_pro_bundesland.get(region, 'gray'))  # fallback auf grau
     ))
 
     # Zieljahr markieren
@@ -235,7 +236,7 @@ if show_deutschland:
         y=df_deutschland['Braunkohle_Anteil_%'],
         mode='lines+markers',
         name='Anteil Braunkohle (%)',
-        line=dict(dash='dot', color='dimgray'),
+        line=dict(dash='dot', color='firebrick'),
         yaxis='y2'
     ))
 
