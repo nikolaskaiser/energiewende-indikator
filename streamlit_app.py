@@ -133,21 +133,6 @@ region_data = {
     }
 }
 
-# Bruttostromerzeugung gesamt laden
-df_total = pd.read_excel("lak-download (7).xlsx", sheet_name='LAK', skiprows=5)
-df_total.columns = ['Bundesland', 'Jahr', 'GWh', 'Rest']
-df_total = df_total[['Bundesland', 'Jahr', 'GWh']]
-df_total['Jahr'] = pd.to_numeric(df_total['Jahr'], errors='coerce')
-df_total['GWh'] = pd.to_numeric(df_total['GWh'], errors='coerce')
-df_total = df_total.dropna(subset=['Jahr', 'GWh'])
-
-# Gesamtstrom je Jahr berechnen
-df_total_jahr = df_total.groupby('Jahr')['GWh'].sum().reset_index()
-df_total_jahr['TWh_gesamt'] = df_total_jahr['GWh'] / 1000
-
-# Merge mit df_deutschland
-df_deutschland = pd.merge(df_deutschland, df_total_jahr[['Jahr', 'TWh_gesamt']], on='Jahr', how='left')
-df_deutschland['Braunkohle_Anteil_%'] = (df_deutschland['Braunkohle_TWh'] / df_deutschland['TWh_gesamt']) * 100
 
 
 # ----------------------------
@@ -172,6 +157,23 @@ df_deutschland = pd.DataFrame({
 })
 # Nur bis einschließlich 2022 anzeigen
 df_deutschland = df_deutschland[df_deutschland['Jahr'] <= 2022]
+
+# Bruttostromerzeugung gesamt laden
+df_total = pd.read_excel("lak-download (7).xlsx", sheet_name='LAK', skiprows=5)
+df_total.columns = ['Bundesland', 'Jahr', 'GWh', 'Rest']
+df_total = df_total[['Bundesland', 'Jahr', 'GWh']]
+df_total['Jahr'] = pd.to_numeric(df_total['Jahr'], errors='coerce')
+df_total['GWh'] = pd.to_numeric(df_total['GWh'], errors='coerce')
+df_total = df_total.dropna(subset=['Jahr', 'GWh'])
+
+# Gesamtstrom je Jahr berechnen
+df_total_jahr = df_total.groupby('Jahr')['GWh'].sum().reset_index()
+df_total_jahr['TWh_gesamt'] = df_total_jahr['GWh'] / 1000
+
+# Merge mit df_deutschland
+df_deutschland = pd.merge(df_deutschland, df_total_jahr[['Jahr', 'TWh_gesamt']], on='Jahr', how='left')
+df_deutschland['Braunkohle_Anteil_%'] = (df_deutschland['Braunkohle_TWh'] / df_deutschland['TWh_gesamt']) * 100
+
 
 # ----------------------------
 # Streamlit UI
