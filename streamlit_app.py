@@ -256,7 +256,12 @@ fig.update_layout(
     title='Bruttostromerzeugung aus Braunkohle im Vergleich',
     xaxis_title='Jahr',
     yaxis=dict(title='TWh'),
-    yaxis2=dict(title='Anteil Braunkohle (%)', overlaying='y', side='right'),
+    yaxis2=dict(
+    title='Anteil Braunkohle (%)',
+    overlaying='y',
+    side='right',
+    range=[0, 100]  # 👈 fest auf 0–100%
+),
     legend_title='Legende',
     height=600
 )
