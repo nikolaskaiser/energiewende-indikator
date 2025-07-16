@@ -14,8 +14,8 @@ menu = st.sidebar.selectbox(
 # Seite: Indikator
 # ---------------------
 if menu == "Indikator":
-    st.title("🌍 Energiewende-Indikator – Kohleausstieg in den drei Revieren")
-    st.markdown("Diese App zeigt den Fortschritt der drei Braunkohlereviere in fünf Indikatorfeldern.")
+    st.title("🌍 Energiewende-Indikator – Braunkohleausstieg")
+    st.markdown("Diese App zeigt den Fortschritt der Energiewende, insbesondere des Braunkohleausstiegs in Deutschland")
 
     data = {
         'Indikator': [
