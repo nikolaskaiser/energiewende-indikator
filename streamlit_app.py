@@ -239,13 +239,6 @@ if show_deutschland:
         yaxis='y2'
     ))
 
-    fig.add_trace(go.Scatter(
-        x=df_deutschland['Jahr'],
-        y=df_deutschland['Braunkohle_TWh'],
-        mode='lines+markers',
-        name='Deutschland gesamt',
-        line=dict(width=4, color='black')
-    ))
 
 # Layout
 fig.update_layout(
