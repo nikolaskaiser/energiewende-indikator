@@ -182,7 +182,7 @@ st.subheader("📈 Braunkohlestromerzeugung – Regionenvergleich")
 selected_regions = st.multiselect(
     "Wähle Bundesländer zum Vergleich",
     options=list(region_data.keys()),
-    default=["Nordrhein-Westfalen", "Brandenburg"]
+    default=["Nordrhein-Westfalen"]
 )
 
 show_deutschland = st.checkbox("Deutschland gesamt anzeigen", value=True)
@@ -205,7 +205,6 @@ for region in selected_regions:
         y=df['Braunkohle_TWh'],
         mode='lines+markers',
         name=region
-        line=dict(color=farbe_pro_bundesland.get(region, 'gray'))  # fallback auf grau
     ))
 
     # Zieljahr markieren
