@@ -213,7 +213,7 @@ for region in selected_regions:
         y=[0],
         mode='markers+text',
         marker=dict(size=10, color='green'),
-        text=[f"{region_info['Zieljahr']} Ziel"],
+        text=[f"Ziel {region_info['Zieljahr']}"],
         textposition='top center',
         showlegend=False
     ))
@@ -235,7 +235,7 @@ if show_deutschland:
         y=df_deutschland['Braunkohle_Anteil_%'],
         mode='lines+markers',
         name='Anteil Braunkohle (%)',
-        line=dict(dash='dot', color='firebrick'),
+        line=dict(dash='dot', color='dimgray'),
         yaxis='y2'
     ))
 
@@ -257,7 +257,7 @@ fig.update_layout(
     xaxis_title='Jahr',
     yaxis=dict(
         title='TWh',
-        range=[0, None]  # optional feste Obergrenze
+        range=[0, max(df_deutschland['Braunkohle_TWh'].max(), 80)]  # optional feste Obergrenze
     ),
     yaxis2=dict(
         title='Anteil Braunkohle (%)',
