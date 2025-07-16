@@ -245,7 +245,7 @@ fig.add_trace(go.Scatter(
     y=[0],
     mode='markers+text',
     marker=dict(size=10, color='green'),
-    text=[" Ziel bundesweit 2038"],
+    text=[" Ziel DE 2038"],
     textposition='top center',
     showlegend=False
 ))
