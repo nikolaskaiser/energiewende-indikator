@@ -133,6 +133,23 @@ region_data = {
     }
 }
 
+# Bruttostromerzeugung gesamt laden
+df_total = pd.read_excel("lak-download (7).xlsx", sheet_name='LAK', skiprows=5)
+df_total.columns = ['Bundesland', 'Jahr', 'GWh', 'Rest']
+df_total = df_total[['Bundesland', 'Jahr', 'GWh']]
+df_total['Jahr'] = pd.to_numeric(df_total['Jahr'], errors='coerce')
+df_total['GWh'] = pd.to_numeric(df_total['GWh'], errors='coerce')
+df_total = df_total.dropna(subset=['Jahr', 'GWh'])
+
+# Gesamtstrom je Jahr berechnen
+df_total_jahr = df_total.groupby('Jahr')['GWh'].sum().reset_index()
+df_total_jahr['TWh_gesamt'] = df_total_jahr['GWh'] / 1000
+
+# Merge mit df_deutschland
+df_deutschland = pd.merge(df_deutschland, df_total_jahr[['Jahr', 'TWh_gesamt']], on='Jahr', how='left')
+df_deutschland['Braunkohle_Anteil_%'] = (df_deutschland['Braunkohle_TWh'] / df_deutschland['TWh_gesamt']) * 100
+
+
 # ----------------------------
 # Gesamt-Deutschland-Daten berechnen
 # ----------------------------
@@ -201,6 +218,25 @@ for region in selected_regions:
 
 # Deutschland gesamt hinzufügen
 if show_deutschland:
+        # Braunkohle gesamt
+    fig.add_trace(go.Scatter(
+        x=df_deutschland['Jahr'],
+        y=df_deutschland['Braunkohle_TWh'],
+        mode='lines+markers',
+        name='Deutschland gesamt (TWh)',
+        line=dict(width=4, color='black')
+    ))
+
+    # Anteil in %
+    fig.add_trace(go.Scatter(
+        x=df_deutschland['Jahr'],
+        y=df_deutschland['Braunkohle_Anteil_%'],
+        mode='lines+markers',
+        name='Anteil Braunkohle (%)',
+        line=dict(dash='dot', color='firebrick'),
+        yaxis='y2'
+    ))
+
     fig.add_trace(go.Scatter(
         x=df_deutschland['Jahr'],
         y=df_deutschland['Braunkohle_TWh'],
@@ -213,10 +249,12 @@ if show_deutschland:
 fig.update_layout(
     title='Bruttostromerzeugung aus Braunkohle im Vergleich',
     xaxis_title='Jahr',
-    yaxis_title='TWh',
-    legend_title='Bundesland',
+    yaxis=dict(title='TWh'),
+    yaxis2=dict(title='Anteil Braunkohle (%)', overlaying='y', side='right'),
+    legend_title='Legende',
     height=600
 )
+
 
 st.plotly_chart(fig)
 
