@@ -239,8 +239,8 @@ if show_deutschland:
         yaxis='y2'
     ))
 
-# Zieljahr für Deutschland gesamt markieren
-fig.add_trace(go.Scatter(
+    # Zieljahr für Deutschland gesamt markieren
+    fig.add_trace(go.Scatter(
     x=[2038],
     y=[0],
     mode='markers+text',
@@ -248,7 +248,7 @@ fig.add_trace(go.Scatter(
     text=[" Ziel 2038"],
     textposition='top center',
     showlegend=False
-))
+    ))
 
 
 # Layout
