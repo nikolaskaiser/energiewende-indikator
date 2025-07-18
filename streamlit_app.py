@@ -4,20 +4,11 @@ import plotly.graph_objects as go
 
 st.set_page_config(page_title="Energiewende-Indikator", layout="wide")
 
-# Sidebar als reiner Text-Link-Block
-st.sidebar.markdown("## Kategorien")
-seiten = ["Indikator", "Politisches Commitment", "Energie", "Klima", "Strukturwandelinvestitionen"]
-
-for seite in seiten:
-    if st.sidebar.button(seite):
-        st.session_state["menu"] = seite
-
-# Standardwert setzen (falls noch nichts gewählt wurde)
-if "menu" not in st.session_state:
-    st.session_state["menu"] = "Energie"  # oder beliebig ändern
-
-menu = st.session_state["menu"]
-
+# Sidebar-Menü
+menu = st.sidebar.selectbox(
+    "Wähle eine Kategorie",
+    ["Indikator", "Politisches Commitment", "Energie", "Klima", "Strukturwandelinvestitionen"]
+)
 
 
 # ---------------------
