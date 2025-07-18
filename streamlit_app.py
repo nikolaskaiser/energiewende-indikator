@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
 
 st.set_page_config(page_title="Energiewende-Indikator", layout="wide")
 
@@ -206,33 +204,12 @@ elif menu == "Energie":
     # Checkbox für Deutschland gesamt
     show_deutschland = st.checkbox("Deutschland gesamt anzeigen")
 
-
-    # ----------------------------
-    # Gesamtstrom berechnen aus Excel (für Braunkohleanteil)
-    # ----------------------------
-    xls = pd.ExcelFile("/mnt/data/bruttostromerzeugung_insgesamt.xlsx")
     
-    df_all_länder = xls.parse("LAK", skiprows=5)
-    df_all_länder.columns = ['Land', 'Jahr', 'Anm', 'GWh', 'Stand']
-    
-    df_all_länder['Jahr'] = pd.to_numeric(df_all_länder['Jahr'], errors='coerce')
-    df_all_länder['GWh'] = pd.to_numeric(df_all_länder['GWh'], errors='coerce')
-    df_all_länder = df_all_länder.dropna(subset=['Jahr', 'GWh'])
-    df_all_länder['Jahr'] = df_all_länder['Jahr'].astype(int)
-    
-    df_gesamtstrom_bereinigt = df_all_länder.groupby('Jahr')['GWh'].sum().reset_index()
-    df_gesamtstrom_bereinigt['Gesamtstrom_TWh'] = df_gesamtstrom_bereinigt['GWh'] / 1000
-    df_gesamtstrom_bereinigt = df_gesamtstrom_bereinigt[['Jahr', 'Gesamtstrom_TWh']]
-
-    # ----------------------------
+     # ----------------------------
     # Plot erstellen
     # ----------------------------
-    from plotly.subplots import make_subplots
-
-    # 1. Figure mit sekundärer Y-Achse erzeugen
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig = go.Figure()
     
-    # 2. Bundesländer (immer auf linker Achse)
     for region in selected_regions:
         region_info = region_data[region]
         df = pd.DataFrame({
@@ -240,13 +217,15 @@ elif menu == "Energie":
             'Braunkohle_TWh': region_info['Braunkohle_TWh']
         })
     
+        # Linie für Region
         fig.add_trace(go.Scatter(
             x=df['Jahr'],
             y=df['Braunkohle_TWh'],
             mode='lines+markers',
             name=region
-        ), secondary_y=False)
+        ))
     
+        # Zieljahr-Marker setzen
         zieljahr = 2030 if region == "Nordrhein-Westfalen" else 2038
         zieltext = "NRW 2030" if region == "Nordrhein-Westfalen" else "DE 2038"
     
@@ -258,9 +237,9 @@ elif menu == "Energie":
             text=[zieltext],
             textposition='top center',
             showlegend=False
-        ), secondary_y=False)
+        ))
     
-    # 3. Deutschland gesamt (linke + rechte Achse)
+    # Optional: Deutschland gesamt hinzufügen
     if show_deutschland:
         de_info = region_data["Deutschland gesamt"]
         df_de = pd.DataFrame({
@@ -268,27 +247,14 @@ elif menu == "Energie":
             'Braunkohle_TWh': de_info['Braunkohle_TWh']
         })
     
-        df_de = df_de.merge(df_gesamtstrom_bereinigt, on='Jahr', how='left')
-        df_de['Braunkohle_Anteil_%'] = df_de['Braunkohle_TWh'] / df_de['Gesamtstrom_TWh'] * 100
-    
-        # TWh – linke Achse
         fig.add_trace(go.Scatter(
             x=df_de['Jahr'],
             y=df_de['Braunkohle_TWh'],
             mode='lines+markers',
-            name="Deutschland gesamt (TWh)"
-        ), secondary_y=False)
+            name="Deutschland gesamt"
+        ))
     
-        # Anteil – rechte Achse
-        fig.add_trace(go.Scatter(
-            x=df_de['Jahr'],
-            y=df_de['Braunkohle_Anteil_%'],
-            mode='lines+markers',
-            name="Anteil Braunkohle (%)",
-            line=dict(dash='dash')
-        ), secondary_y=True)
-    
-        # Zielmarker
+        # Marker für DE 2038
         fig.add_trace(go.Scatter(
             x=[2038],
             y=[0],
@@ -297,24 +263,18 @@ elif menu == "Energie":
             text=["DE 2038"],
             textposition='top center',
             showlegend=False
-        ), secondary_y=False)
+        ))
     
-    # 4. Layout aktualisieren
+    # Layout anpassen
     fig.update_layout(
         title='Bruttostromerzeugung aus Braunkohle im Vergleich',
         xaxis_title='Jahr',
-        yaxis_title='Braunkohle in TWh',
-        legend_title='Region',
+        yaxis_title='TWh',
+        legend_title='Bundesland',
         height=600
     )
     
-    fig.update_yaxes(
-        title_text='Anteil Braunkohle am Stromverbrauch (%)',
-        secondary_y=True
-    )
-    
     st.plotly_chart(fig)
-
     
        
 
@@ -469,4 +429,3 @@ elif menu == "Klima":
 elif menu == "Strukturwandelinvestitionen":
     st.title("🏗️ Strukturwandel-Investitionen")
     st.markdown("Diese Seite ist noch leer und kann später ergänzt werden.")
-
