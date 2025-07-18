@@ -219,26 +219,26 @@ elif menu == "Energie":
         ))
     
           # Zieljahr markieren
-    if region == "Nordrhein-Westfalen":
-        fig.add_trace(go.Scatter(
-            x=[2030],
-            y=[0],
-            mode='markers+text',
-            marker=dict(size=10, color='green'),
-            text=["NRW 2030"],
-            textposition='top center',
-            showlegend=False
-        ))
-    else:
-        fig.add_trace(go.Scatter(
-            x=[2038],
-            y=[0],
-            mode='markers+text',
-            marker=dict(size=10, color='green'),
-            text=["DE 2038"],
-            textposition='top center',
-            showlegend=False
-        ))
+        if region == "Nordrhein-Westfalen":
+            fig.add_trace(go.Scatter(
+                x=[2030],
+                y=[0],
+                mode='markers+text',
+                marker=dict(size=10, color='green'),
+                text=["NRW 2030"],
+                textposition='top center',
+                showlegend=False
+            ))
+        else:
+            fig.add_trace(go.Scatter(
+                x=[2038],
+                y=[0],
+                mode='markers+text',
+                marker=dict(size=10, color='green'),
+                text=["DE 2038"],
+                textposition='top center',
+                showlegend=False
+            ))
 
 
 
