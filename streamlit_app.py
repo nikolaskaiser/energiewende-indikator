@@ -194,11 +194,16 @@ elif menu == "Energie":
         'Zieljahr': 2030  # kannst du beliebig setzen oder None
     }
 
+    # Bundesländer-Auswahl
     selected_regions = st.multiselect(
         "Wähle Bundesländer zum Vergleich",
-        options=list(region_data.keys()),
+        options=[r for r in region_data.keys() if r != "Deutschland gesamt"],
         default=["Nordrhein-Westfalen", "Brandenburg"]
     )
+    
+    # Checkbox für Deutschland gesamt
+    show_deutschland = st.checkbox("Deutschland gesamt anzeigen")
+
     
     # ----------------------------
     # Plot erstellen
@@ -219,6 +224,20 @@ elif menu == "Energie":
         name=region
     ))
 
+    # Optional: Deutschland gesamt hinzufügen
+    if show_deutschland:
+        de_info = region_data["Deutschland gesamt"]
+        df_de = pd.DataFrame({
+            'Jahr': de_info['Jahr'],
+            'Braunkohle_TWh': de_info['Braunkohle_TWh']
+        })
+    
+        fig.add_trace(go.Scatter(
+            x=df_de['Jahr'],
+            y=df_de['Braunkohle_TWh'],
+            mode='lines+markers',
+            name="Deutschland gesamt"
+        ))
 
     
           # Zieljahr markieren
