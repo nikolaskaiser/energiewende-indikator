@@ -5,10 +5,11 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="Energiewende-Indikator", layout="wide")
 
 # Sidebar-Menü
-menu = st.sidebar.selectbox(
+menu = st.sidebar.radio(
     "Wähle eine Kategorie",
     ["Indikator", "Politisches Commitment", "Energie", "Klima", "Strukturwandelinvestitionen"]
 )
+
 
 # ---------------------
 # Seite: Indikator
