@@ -90,13 +90,7 @@ elif menu == "Politisches Commitment":
 # Seite: Energie
 # ---------------------
 elif menu == "Energie":
-    st.title("⚡ Energie – Braunkohlestromerzeugung")
-    st.markdown("Hier folgt deine Visualisierung zur Stromerzeugung aus Braunkohle.")
-    # → Hier kannst du deinen bisherigen Braunkohle-Plot einfügen
-
-
-    
-    # ----------------------------
+        # ----------------------------
     # Alle Daten
     # ----------------------------
     region_data = {
@@ -173,48 +167,6 @@ elif menu == "Energie":
         }
     }
     
-    
-    
-    # ----------------------------
-    # Gesamt-Deutschland-Daten berechnen
-    # ----------------------------
-    # Sammle alle Jahre aus allen Regionen
-    alle_jahre = sorted(set(j for region in region_data.values() for j in region['Jahr']))
-    
-    # Initialisiere leeres Dictionary mit 0 für jedes Jahr
-    deutschland_braunkohle = {jahr: 0 for jahr in alle_jahre}
-    
-    # Iteriere über alle Regionen und summiere die Werte für jedes Jahr
-    for region in region_data.values():
-        for jahr, wert in zip(region['Jahr'], region['Braunkohle_TWh']):
-            if wert is not None:
-                deutschland_braunkohle[jahr] += wert
-    
-    # Umwandeln in DataFrame
-    df_deutschland = pd.DataFrame({
-        'Jahr': list(deutschland_braunkohle.keys()),
-        'Braunkohle_TWh': list(deutschland_braunkohle.values())
-    })
-    # Nur bis einschließlich 2022 anzeigen
-    df_deutschland = df_deutschland[df_deutschland['Jahr'] <= 2022]
-    
-    # Bruttostromerzeugung gesamt laden
-    df_total = pd.read_excel("lak-download (7).xlsx", sheet_name='LAK', skiprows=5)
-    df_total.columns = ['Bundesland', 'Jahr', 'GWh', 'Rest']
-    df_total = df_total[['Bundesland', 'Jahr', 'GWh']]
-    df_total['Jahr'] = pd.to_numeric(df_total['Jahr'], errors='coerce')
-    df_total['GWh'] = pd.to_numeric(df_total['GWh'], errors='coerce')
-    df_total = df_total.dropna(subset=['Jahr', 'GWh'])
-    
-    # Gesamtstrom je Jahr berechnen
-    df_total_jahr = df_total.groupby('Jahr')['GWh'].sum().reset_index()
-    df_total_jahr['TWh_gesamt'] = df_total_jahr['GWh'] / 1000
-    
-    # Merge mit df_deutschland
-    df_deutschland = pd.merge(df_deutschland, df_total_jahr[['Jahr', 'TWh_gesamt']], on='Jahr', how='left')
-    df_deutschland['Braunkohle_Anteil_%'] = (df_deutschland['Braunkohle_TWh'] / df_deutschland['TWh_gesamt']) * 100
-    
-    
     # ----------------------------
     # Streamlit UI
     # ----------------------------
@@ -222,17 +174,14 @@ elif menu == "Energie":
     selected_regions = st.multiselect(
         "Wähle Bundesländer zum Vergleich",
         options=list(region_data.keys()),
-        default=[None]
+        default=["Nordrhein-Westfalen", "Brandenburg"]
     )
-    
-    show_deutschland = st.checkbox("Deutschland gesamt anzeigen", value=True)
     
     # ----------------------------
     # Plot erstellen
     # ----------------------------
     fig = go.Figure()
     
-    # Einzelne Regionen hinzufügen
     for region in selected_regions:
         region_info = region_data[region]
         df = pd.DataFrame({
@@ -253,63 +202,18 @@ elif menu == "Energie":
             y=[0],
             mode='markers+text',
             marker=dict(size=10, color='green'),
-            text=[f"Ziel {region_info['Zieljahr']}"],
+            text=[f"{region_info['Zieljahr']} Ziel"],
             textposition='top center',
             showlegend=False
         ))
     
-    # Deutschland gesamt hinzufügen
-    if show_deutschland:
-            # Braunkohle gesamt
-        fig.add_trace(go.Scatter(
-            x=df_deutschland['Jahr'],
-            y=df_deutschland['Braunkohle_TWh'],
-            mode='lines+markers',
-            name='Deutschland gesamt (TWh)',
-            line=dict(width=4, color='black')
-        ))
-    
-        # Anteil in %
-        fig.add_trace(go.Scatter(
-            x=df_deutschland['Jahr'],
-            y=df_deutschland['Braunkohle_Anteil_%'],
-            mode='lines+markers',
-            name='Anteil Braunkohle (%)',
-            line=dict(dash='dot', color='firebrick'),
-            yaxis='y2'
-        ))
-    
-        # Zieljahr für Deutschland gesamt markieren
-        fig.add_trace(go.Scatter(
-        x=[2038],
-        y=[0],
-        mode='markers+text',
-        marker=dict(size=10, color='green'),
-        text=[" Ziel 2038"],
-        textposition='top center',
-        showlegend=False
-        ))
-    
-    
-    # Layout
     fig.update_layout(
         title='Bruttostromerzeugung aus Braunkohle im Vergleich',
         xaxis_title='Jahr',
-        yaxis=dict(
-            title='TWh',
-            range=[0, max(df_deutschland['Braunkohle_TWh'].max(), 80)]  # optional feste Obergrenze
-        ),
-        yaxis2=dict(
-            title='Anteil Braunkohle (%)',
-            overlaying='y',
-            side='right',
-            range=[0, 100],
-            anchor='x'  # wichtig: an dieselbe x-Achse koppeln
-        ),
-        legend_title='Legende',
+        yaxis_title='TWh',
+        legend_title='Bundesland',
         height=600
     )
-    
     
     st.plotly_chart(fig)
 
