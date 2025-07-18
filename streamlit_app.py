@@ -224,7 +224,8 @@ elif menu == "Energie":
             y=[0],
             mode='markers+text',
             marker=dict(size=10, color='green'),
-            text=[f"{region_info['Zieljahr']} Ziel"],
+            text=[f"{region} Ziel {region_info['Zieljahr']}"],
+
             textposition='top center',
             showlegend=False
         ))
