@@ -238,6 +238,69 @@ elif menu == "Energie":
     )
     
     st.plotly_chart(fig)
+    # Wenn "Deutschland gesamt" ausgewählt ist, zeige kombinierten Plot mit Anteil
+if "Deutschland gesamt" in selected_regions:
+    st.markdown("### 🇩🇪 Deutschland gesamt – Braunkohle & Anteil an Gesamtstrom")
+
+    df_excel = pd.read_excel("bruttostromerzeugung_insgesamt.xlsx", header=None)
+    df_excel = df_excel.iloc[6:]
+    df_excel.columns = ["Land", "Jahr", "Wert_GWh"]
+    df_excel["Jahr"] = pd.to_numeric(df_excel["Jahr"], errors="coerce")
+    df_excel["Wert_GWh"] = pd.to_numeric(df_excel["Wert_GWh"], errors="coerce")
+
+    deutschland_df = df_excel[df_excel["Land"] == "Deutschland"].reset_index(drop=True)
+    n_jahre = deutschland_df["Jahr"].nunique()
+
+    gesamt = deutschland_df.iloc[:n_jahre].copy()
+    braunkohle = deutschland_df.iloc[n_jahre:2 * n_jahre].copy()
+
+    gesamt["Wert_TWh"] = gesamt["Wert_GWh"] / 1000
+    braunkohle["Wert_TWh"] = braunkohle["Wert_GWh"] / 1000
+
+    combined = pd.merge(
+        braunkohle[["Jahr", "Wert_TWh"]].rename(columns={"Wert_TWh": "Braunkohle_TWh"}),
+        gesamt[["Jahr", "Wert_TWh"]].rename(columns={"Wert_TWh": "Gesamt_TWh"}),
+        on="Jahr"
+    )
+    combined["Anteil_%"] = (combined["Braunkohle_TWh"] / combined["Gesamt_TWh"]) * 100
+
+    fig_combined = go.Figure()
+
+    fig_combined.add_trace(go.Scatter(
+        x=combined["Jahr"],
+        y=combined["Braunkohle_TWh"],
+        name="Braunkohle (TWh)",
+        mode="lines+markers",
+        line=dict(color="firebrick"),
+        yaxis="y1"
+    ))
+
+    fig_combined.add_trace(go.Scatter(
+        x=combined["Jahr"],
+        y=combined["Anteil_%"],
+        name="Anteil Braunkohle (%)",
+        mode="lines+markers",
+        line=dict(color="royalblue"),
+        yaxis="y2"
+    ))
+
+    fig_combined.update_layout(
+        title="Braunkohlestrom & Anteil an Gesamtstrom – Deutschland gesamt",
+        xaxis=dict(title="Jahr"),
+        yaxis=dict(title="Braunkohle (TWh)", titlefont=dict(color="firebrick"), tickfont=dict(color="firebrick")),
+        yaxis2=dict(
+            title="Anteil (%)",
+            titlefont=dict(color="royalblue"),
+            tickfont=dict(color="royalblue"),
+            overlaying="y",
+            side="right"
+        ),
+        height=600,
+        legend=dict(x=0.01, y=0.99)
+    )
+
+    st.plotly_chart(fig_combined)
+
 
     #ee anteil am verbrauch
     # ----------- Daten einlesen (angepasst an deine Excel-Struktur) -----------
