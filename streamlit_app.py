@@ -220,21 +220,28 @@ elif menu == "Energie":
     
       # Zieljahr-Marker einfügen
     if region == "Nordrhein-Westfalen":
-        text = "NRW 2030"
-    elif region != "Deutschland gesamt":
-        text = "DE 2038"
-    else:
-        text = "DE 2038"
+        fig.add_trace(go.Scatter(
+            x=[region_info['Zieljahr']],
+            y=[0],
+            mode='markers+text',
+            marker=dict(size=10, color='green'),
+            text=["NRW 2030"],
+            textposition='top center',
+            showlegend=False
+        ))
     
-    fig.add_trace(go.Scatter(
-        x=[region_info['Zieljahr']],
-        y=[0],
-        mode='markers+text',
-        marker=dict(size=10, color='green'),
-        text=[text],
-        textposition='top center',
-        showlegend=False
-    ))
+    # Nur wenn DE noch nicht angezeigt wurde, Marker für DE 2038 setzen
+    if region != "Nordrhein-Westfalen":
+        fig.add_trace(go.Scatter(
+            x=[2038],
+            y=[0],
+            mode='markers+text',
+            marker=dict(size=10, color='green'),
+            text=["DE 2038"],
+            textposition='top center',
+            showlegend=False
+        ))
+
 
 
     
