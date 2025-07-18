@@ -205,10 +205,13 @@ elif menu == "Energie":
     show_deutschland = st.checkbox("Deutschland gesamt anzeigen")
 
     
-    # ----------------------------
+     # ----------------------------
     # Plot erstellen
     # ----------------------------
     fig = go.Figure()
+    
+    # Flag zum Prüfen, ob NRW enthalten ist
+    nrw_dabei = False
     
     for region in selected_regions:
         region_info = region_data[region]
@@ -218,12 +221,16 @@ elif menu == "Energie":
         })
     
         fig.add_trace(go.Scatter(
-        x=df['Jahr'],
-        y=df['Braunkohle_TWh'],
-        mode='lines+markers',
-        name=region
-    ))
-
+            x=df['Jahr'],
+            y=df['Braunkohle_TWh'],
+            mode='lines+markers',
+            name=region
+        ))
+    
+        # Prüfen, ob NRW ausgewählt ist
+        if region == "Nordrhein-Westfalen":
+            nrw_dabei = True
+    
     # Optional: Deutschland gesamt hinzufügen
     if show_deutschland:
         de_info = region_data["Deutschland gesamt"]
@@ -238,30 +245,30 @@ elif menu == "Energie":
             mode='lines+markers',
             name="Deutschland gesamt"
         ))
-
     
-          # Zieljahr markieren
-        if region == "Nordrhein-Westfalen":
-            fig.add_trace(go.Scatter(
-                x=[2030],
-                y=[0],
-                mode='markers+text',
-                marker=dict(size=10, color='green'),
-                text=["NRW 2030"],
-                textposition='top center',
-                showlegend=False
-            ))
-        else:
-            fig.add_trace(go.Scatter(
-                x=[2038],
-                y=[0],
-                mode='markers+text',
-                marker=dict(size=10, color='green'),
-                text=["DE 2038"],
-                textposition='top center',
-                showlegend=False
-            ))
-
+    # Zielmarken hinzufügen
+    if nrw_dabei:
+        fig.add_trace(go.Scatter(
+            x=[2030],
+            y=[0],
+            mode='markers+text',
+            marker=dict(size=10, color='green'),
+            text=["NRW 2030"],
+            textposition='top center',
+            showlegend=False
+        ))
+    else:
+        fig.add_trace(go.Scatter(
+            x=[2038],
+            y=[0],
+            mode='markers+text',
+            marker=dict(size=10, color='green'),
+            text=["DE 2038"],
+            textposition='top center',
+            showlegend=False
+        ))
+    
+    
 
 
 
