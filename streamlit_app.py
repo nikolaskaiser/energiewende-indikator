@@ -212,16 +212,13 @@ elif menu == "Energie":
             'Braunkohle_TWh': region_info['Braunkohle_TWh']
         })
     
-        zieljahr = region_info['Zieljahr']
-        zieljahr_label = f"{region} (Ziel: {zieljahr})"
-    
-        # Braunkohle-Verlauf
         fig.add_trace(go.Scatter(
-            x=df['Jahr'],
-            y=df['Braunkohle_TWh'],
-            mode='lines+markers',
-            name=zieljahr_label
-        ))
+        x=df['Jahr'],
+        y=df['Braunkohle_TWh'],
+        mode='lines+markers',
+        name=region
+    ))
+
 
     
           # Zieljahr markieren
