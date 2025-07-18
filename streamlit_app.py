@@ -172,26 +172,26 @@ elif menu == "Energie":
     # ----------------------------
     st.subheader("📈 Braunkohlestromerzeugung – Regionenvergleich")
     # Deutschland gesamt berechnen
-jahre = sorted(set(j for r in region_data.values() for j in r['Jahr']))
-deutschland_gesamt = {'Jahr': [], 'Braunkohle_TWh': []}
-
-for jahr in jahre:
-    jahr_summe = 0
-    for region in region_data.values():
-        if jahr in region['Jahr']:
-            index = region['Jahr'].index(jahr)
-            wert = region['Braunkohle_TWh'][index]
-            if wert is not None:
-                jahr_summe += wert
-    deutschland_gesamt['Jahr'].append(jahr)
-    deutschland_gesamt['Braunkohle_TWh'].append(jahr_summe)
-
-# Füge zur Auswahl hinzu
-region_data['Deutschland gesamt'] = {
-    'Jahr': deutschland_gesamt['Jahr'],
-    'Braunkohle_TWh': deutschland_gesamt['Braunkohle_TWh'],
-    'Zieljahr': 2030  # kannst du beliebig setzen oder None
-}
+    jahre = sorted(set(j for r in region_data.values() for j in r['Jahr']))
+    deutschland_gesamt = {'Jahr': [], 'Braunkohle_TWh': []}
+    
+    for jahr in jahre:
+        jahr_summe = 0
+        for region in region_data.values():
+            if jahr in region['Jahr']:
+                index = region['Jahr'].index(jahr)
+                wert = region['Braunkohle_TWh'][index]
+                if wert is not None:
+                    jahr_summe += wert
+        deutschland_gesamt['Jahr'].append(jahr)
+        deutschland_gesamt['Braunkohle_TWh'].append(jahr_summe)
+    
+    # Füge zur Auswahl hinzu
+    region_data['Deutschland gesamt'] = {
+        'Jahr': deutschland_gesamt['Jahr'],
+        'Braunkohle_TWh': deutschland_gesamt['Braunkohle_TWh'],
+        'Zieljahr': 2030  # kannst du beliebig setzen oder None
+    }
 
     selected_regions = st.multiselect(
         "Wähle Bundesländer zum Vergleich",
