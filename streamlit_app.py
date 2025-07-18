@@ -210,9 +210,6 @@ elif menu == "Energie":
     # ----------------------------
     fig = go.Figure()
     
-    # Flag zum Prüfen, ob NRW enthalten ist
-    nrw_dabei = False
-    
     for region in selected_regions:
         region_info = region_data[region]
         df = pd.DataFrame({
@@ -220,6 +217,7 @@ elif menu == "Energie":
             'Braunkohle_TWh': region_info['Braunkohle_TWh']
         })
     
+        # Linie für Region
         fig.add_trace(go.Scatter(
             x=df['Jahr'],
             y=df['Braunkohle_TWh'],
@@ -227,9 +225,19 @@ elif menu == "Energie":
             name=region
         ))
     
-        # Prüfen, ob NRW ausgewählt ist
-        if region == "Nordrhein-Westfalen":
-            nrw_dabei = True
+        # Zieljahr-Marker setzen
+        zieljahr = 2030 if region == "Nordrhein-Westfalen" else 2038
+        zieltext = "NRW 2030" if region == "Nordrhein-Westfalen" else "DE 2038"
+    
+        fig.add_trace(go.Scatter(
+            x=[zieljahr],
+            y=[0],
+            mode='markers+text',
+            marker=dict(size=10, color='green'),
+            text=[zieltext],
+            textposition='top center',
+            showlegend=False
+        ))
     
     # Optional: Deutschland gesamt hinzufügen
     if show_deutschland:
@@ -246,18 +254,7 @@ elif menu == "Energie":
             name="Deutschland gesamt"
         ))
     
-    # Zielmarken hinzufügen
-    if nrw_dabei:
-        fig.add_trace(go.Scatter(
-            x=[2030],
-            y=[0],
-            mode='markers+text',
-            marker=dict(size=10, color='green'),
-            text=["NRW 2030"],
-            textposition='top center',
-            showlegend=False
-        ))
-    else:
+        # Marker für DE 2038
         fig.add_trace(go.Scatter(
             x=[2038],
             y=[0],
@@ -268,11 +265,7 @@ elif menu == "Energie":
             showlegend=False
         ))
     
-    
-
-
-
-    
+    # Layout anpassen
     fig.update_layout(
         title='Bruttostromerzeugung aus Braunkohle im Vergleich',
         xaxis_title='Jahr',
@@ -282,7 +275,8 @@ elif menu == "Energie":
     )
     
     st.plotly_chart(fig)
-   
+    
+       
 
 
     #ee anteil am verbrauch
