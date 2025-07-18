@@ -172,7 +172,7 @@ elif menu == "Energie":
     # ----------------------------
     st.subheader("📈 Braunkohlestromerzeugung – Regionenvergleich")
     # Deutschland gesamt berechnen
-    jahre = sorted(set(j for r in region_data.values() for j in r['Jahr']))
+    jahre = sorted(set(j for r in region_data.values() for j in r['Jahr'] if j != 2023))  # 2023 ausschließen
     deutschland_gesamt = {'Jahr': [], 'Braunkohle_TWh': []}
     
     for jahr in jahre:
