@@ -218,17 +218,19 @@ elif menu == "Energie":
             name=region
         ))
     
-        # Zieljahr markieren
+       # Nur Zieljahr für DE und NRW markieren
+    if region in ["Deutschland gesamt", "Nordrhein-Westfalen"]:
+        ziel_text = "DE 2038" if region == "Deutschland gesamt" else "NRW 2030"
         fig.add_trace(go.Scatter(
             x=[region_info['Zieljahr']],
             y=[0],
             mode='markers+text',
             marker=dict(size=10, color='green'),
-            text=[f"{region} Ziel {region_info['Zieljahr']}"],
-
+            text=[ziel_text],
             textposition='top center',
             showlegend=False
         ))
+
     
     fig.update_layout(
         title='Bruttostromerzeugung aus Braunkohle im Vergleich',
