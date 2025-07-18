@@ -206,7 +206,25 @@ elif menu == "Energie":
     # Checkbox für Deutschland gesamt
     show_deutschland = st.checkbox("Deutschland gesamt anzeigen")
 
-   # ----------------------------
+
+    # ----------------------------
+    # Gesamtstrom berechnen aus Excel (für Braunkohleanteil)
+    # ----------------------------
+    xls = pd.ExcelFile("/mnt/data/bruttostromerzeugung_insgesamt.xlsx")
+    
+    df_all_länder = xls.parse("LAK", skiprows=5)
+    df_all_länder.columns = ['Land', 'Jahr', 'Anm', 'GWh', 'Stand']
+    
+    df_all_länder['Jahr'] = pd.to_numeric(df_all_länder['Jahr'], errors='coerce')
+    df_all_länder['GWh'] = pd.to_numeric(df_all_länder['GWh'], errors='coerce')
+    df_all_länder = df_all_länder.dropna(subset=['Jahr', 'GWh'])
+    df_all_länder['Jahr'] = df_all_länder['Jahr'].astype(int)
+    
+    df_gesamtstrom_bereinigt = df_all_länder.groupby('Jahr')['GWh'].sum().reset_index()
+    df_gesamtstrom_bereinigt['Gesamtstrom_TWh'] = df_gesamtstrom_bereinigt['GWh'] / 1000
+    df_gesamtstrom_bereinigt = df_gesamtstrom_bereinigt[['Jahr', 'Gesamtstrom_TWh']]
+
+    # ----------------------------
     # Plot erstellen
     # ----------------------------
     from plotly.subplots import make_subplots
