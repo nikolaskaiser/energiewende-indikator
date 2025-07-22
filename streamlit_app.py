@@ -85,6 +85,80 @@ elif menu == "Politisches Commitment":
         - Kein vergleichbares Commitment in Brandenburg, Sachsen oder Sachsen-Anhalt bisher.
         """)
 
+    with st.expander("🌍 2015 – Pariser Klimaabkommen"):
+        st.markdown("""
+        - Internationales Abkommen zur Begrenzung der globalen Erwärmung auf **unter 2 °C**, möglichst **1,5 °C**.
+        - Deutschland verpflichtet sich zur **Treibhausgasneutralität bis 2050**.
+        - Grundlage für viele spätere nationale Klimaschutzgesetze und Ausstiegsstrategien.
+        """)
+
+    with st.expander("📜 2019 – Klimaschutzgesetz verabschiedet"):
+        st.markdown("""
+        - Erstes deutsches Gesetz mit **verbindlichen CO₂-Reduktionszielen für einzelne Sektoren** (z. B. Energie, Verkehr, Gebäude).
+        - Langfristiges Ziel: **Klimaneutralität bis 2050**.
+        - Jährliche Zielüberprüfung durch Expertenrat für Klimafragen.
+        """)
+
+    with st.expander("⚖️ 2021 – Urteil des Bundesverfassungsgerichts & Gesetzesnovelle"):
+        st.markdown("""
+        - Das Bundesverfassungsgericht erklärt Teile des Klimaschutzgesetzes für **verfassungswidrig** (unzureichender Schutz künftiger Generationen).
+        - Bundesregierung verschärft daraufhin die Klimaziele:
+            - **Klimaneutralität bis 2045**
+            - **65 % weniger Treibhausgase bis 2030** im Vergleich zu 1990
+        """)
+
+    with st.expander("💶 2023 – Klima- und Transformationsfonds (KTF)"):
+        st.markdown("""
+        - Der Fonds bündelt staatliche Investitionen für Klimaschutz, Energiewende und Industrie-Transformation.
+        - **Volumen: ca. 177 Milliarden Euro bis 2027**.
+        - Förderung z. B. von Wasserstofftechnologien, Industrie-Dekarbonisierung, E-Mobilität, Gebäudesanierung.
+        """)
+
+    with st.expander("🏗️ 2020 – Strukturstärkungsgesetz Kohleregionen"):
+        st.markdown("""
+        - Parallel zum Kohleausstiegsgesetz verabschiedet.
+        - Regelt die Verteilung von **bis zu 40 Milliarden Euro** Strukturhilfen bis 2038:
+            - **14 Mrd. €** direkte Bundesinvestitionen (z. B. Forschungseinrichtungen, Infrastruktur)
+            - **26 Mrd. €** Förderprogramme, von den Ländern eigenständig umgesetzt
+        - Zielregionen: **Lausitz, Mitteldeutsches Revier, Rheinisches Revier**
+        """)
+
+    with st.expander("⚡ 2000 / 2021 / 2023 – Erneuerbare-Energien-Gesetz (EEG)"):
+        st.markdown("""
+        - Seit 2000: Einführung der **Einspeisevergütung** und Vorrang für erneuerbare Energien im Netz.
+        - EEG 2021: Ziel von **mind. 65 % Erneuerbare am Bruttostromverbrauch bis 2030**.
+        - EEG 2023: Ziel verschärft auf **mind. 80 % bis 2030**.
+        """)
+
+    with st.expander("🔌 2011 / 2019 – Netzausbaubeschleunigungsgesetz (NABEG)"):
+        st.markdown("""
+        - Ziel: **Beschleunigung des Stromnetzausbaus**, v. a. Nord–Süd-Trassen (HGÜ).
+        - Einführung vereinfachter Genehmigungsverfahren, **Erdverkabelung als Standard**.
+        - **Bis 2030 sollen rund 14.000 km Stromleitungen neu- oder ausgebaut** werden.
+        """)
+
+    with st.expander("🧠 2016 – Gesetz zur Digitalisierung der Energiewende"):
+        st.markdown("""
+        - Rechtsrahmen für den bundesweiten **Smart-Meter-Rollout**.
+        - Verpflichtet Netzbetreiber, Versorger und größere Verbraucher zu **intelligenten Messsystemen**.
+        - Ziel: **80 % aller Haushalte sollen bis 2030 mit Smart Metern ausgestattet** sein.
+        """)
+
+    with st.expander("📶 2021 / 2023 – Novellen des Energiewirtschaftsgesetzes (EnWG)"):
+        st.markdown("""
+        - Einführung des **Smart-Meter-Gateways** als sichere Kommunikationsplattform.
+        - Start von **Redispatch 2.0**: Netzbetreiber dürfen Erzeugung und Verbrauch aktiv steuern.
+        - Bereits über **50.000 Erzeugungsanlagen** beteiligt (2023).
+        - Ziel: Reduktion von Netzengpässen und **minimierte Redispatch-Kosten** (2022: ca. 2,7 Mrd. €).
+        """)
+
+    with st.expander("🔋 2023 – EEG-Erleichterungen für Stromspeicher"):
+        st.markdown("""
+        - Speichertechnologien werden regulatorisch besser gestellt.
+        - Befreiung von EEG-Umlagen bei reinem Zwischenspeichern.
+        - Laut Bundesregierung sollen **bis 2030 rund 24 GW Flexibilität** (u. a. durch Speicher) bereitgestellt werden.
+        - Installierte Leistung (2024): bereits **ca. 7–8 GW**, stark wachsend.
+        """)
 
 
 # ---------------------
