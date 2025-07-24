@@ -598,24 +598,22 @@ elif menu == "Energie":
         "Wind auf See": [0.994, 3.297, 4.150, 5.427, 6.393, 7.555, 7.787, 7.807, 8.149, 8.473, 9.215]
     }
     
-    # Politische Ziele für 2030 laut EEG
     ziele_2030 = {
         "Photovoltaik": 215,
         "Wind an Land": 115,
         "Wind auf See": 30
     }
     
-    # DataFrame aufbauen
     df = pd.DataFrame(data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
     
     # Streamlit UI
-    st.title("Installierte Leistung von PV & Wind (2014–2024)")
+    st.title("Installierte Leistung von PV & Wind (2014–2024) mit Zielen 2030")
     auswahl = st.multiselect("Wähle Technologien zum Vergleich", options=list(data.keys()), default=list(data.keys()))
     
-    # Plot erstellen
+    # Plotly-Figur
     fig = go.Figure()
     
-    # Linien für reale Daten
+    # Entwicklungslinien
     for tech in auswahl:
         fig.add_trace(go.Scatter(
             x=df["Jahr"],
@@ -624,27 +622,30 @@ elif menu == "Energie":
             name=tech
         ))
     
-    # Zielmarken für 2030
+    # Zielpunkte 2030
     for tech in auswahl:
         fig.add_trace(go.Scatter(
-            x=[2023, 2030],
-            y=[ziele_2030[tech]] * 2,
-            mode="lines",
-            name=f"Ziel 2030: {tech} ({ziele_2030[tech]} GW)",
-            line=dict(dash="dash", width=2),
-            showlegend=True
+            x=[2030],
+            y=[ziele_2030[tech]],
+            mode="markers+text",
+            name=f"Ziel 2030: {tech}",
+            marker=dict(symbol="star", size=12, color="green"),
+            text=[f"Ziel: {ziele_2030[tech]} GW"],
+            textposition="top center",
+            showlegend=False
         ))
     
     # Layout
     fig.update_layout(
-        title="Installierte Leistung (EEG-Ziele vs. Entwicklung)",
+        title="Installierte Leistung – Erneuerbare Energien vs. Ziel 2030",
         xaxis_title="Jahr",
         yaxis_title="Installierte Leistung [GW]",
-        legend=dict(x=0.01, y=1.15, orientation="h"),
-        height=600
+        height=600,
+        legend=dict(x=0.01, y=1.15, orientation="h")
     )
     
     st.plotly_chart(fig)
+
 
 
 
