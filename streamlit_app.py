@@ -585,41 +585,6 @@ elif menu == "Energie":
     
     st.plotly_chart(fig)
 
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    import numpy as np
-    
-    # Daten: Jahr + Mengen in 1.000 Tonnen
-    jahre = [1990, 1995, 2000, 2005, 2010, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
-    kraftwerke = [83454, 85737, 81000, 86415, 80106, 83507, 79686, 79316, 74246, 53877, 41834, 53243, 56652, 40554, 36686]
-    grubenkraftwerke = [1111, 1738, 1697, 1449, 814, 842, 666, 1429, 1532, 1458, 1258, 1181, 1203, 1358, 1201]
-    selbstverbrauch = [13429, 11866, 8764, 9112, 9597, 10571, 9816, 10201, 10326, 9282, 8077, 7961, 7246, 6147, 5788]
-    sonstige = [4187, 843, 437, 312, 222, 186, 183, 194, 195, 189, 193, 198, 202, 183, 146]
-    
-    # DataFrame
-    df = pd.DataFrame({
-        "Jahr": jahre,
-        "Kraftwerke": kraftwerke,
-        "Grubenkraftwerke": grubenkraftwerke,
-        "Veredlung/Selbstverbrauch": selbstverbrauch,
-        "Sonstige Abnehmer": sonstige
-    })
-    
-    # Umwandlung in float und NumPy-Arrays
-    x = df["Jahr"].values.astype(float)
-    y_values = [df[col].values.astype(float) for col in df.columns[1:]]
-    
-    # Plot
-    plt.figure(figsize=(12, 6))
-    plt.stackplot(x, y_values, labels=df.columns[1:], alpha=0.9)
-    
-    plt.title("Verwendung der Braunkohle im Rheinland (1990–2024)")
-    plt.xlabel("Jahr")
-    plt.ylabel("Verbrauch [1.000 t]")
-    plt.legend(loc="upper right")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
 
 
 # ---------------------
