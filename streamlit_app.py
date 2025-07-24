@@ -781,10 +781,15 @@ elif menu == "Klima":
     #
     #THG Emissionen DE
     #
+    import streamlit as st
     import pandas as pd
     import plotly.graph_objects as go
     
-    # Jahre und Daten
+    st.set_page_config(layout="wide")
+    st.title("Treibhausgasemissionen nach Sektor in Deutschland")
+    st.markdown("**Quelle: DESTATIS / UBA – inkl. Klimaziele 2030 laut Klimaschutzgesetz**")
+    
+    # Daten
     jahre = [1990, 2000, 2010, 2020, 2021, 2022, 2023, 2024]
     daten = {
         "Energiewirtschaft": [474.772, 390.844, 372.637, 219.038, 246.421, 256.670, 202.582, 184.994],
@@ -795,7 +800,6 @@ elif menu == "Klima":
         "Sonstige": [41.550, 29.572, 12.192, 6.121, 5.915, 5.650, 5.490, 5.356]
     }
     
-    # Ziele für 2030 (Mio. t CO₂e)
     ziele_2030 = {
         "Energiewirtschaft": 108,
         "Industrie": 118,
@@ -805,15 +809,18 @@ elif menu == "Klima":
         "Sonstige": 5
     }
     
-    # DataFrame erstellen
+    # DataFrame
     df = pd.DataFrame(daten, index=jahre)
     df["Gesamt"] = df.sum(axis=1)
     
-    # Plotly-Figur erstellen
+    # Auswahl
+    sektoren = list(daten.keys())
+    auswahl = st.multiselect("Wähle Sektoren für den Vergleich", sektoren, default=sektoren)
+    
+    # Plotly-Plot
     fig = go.Figure()
     
-    # Linien für jeden Sektor
-    for sektor in daten:
+    for sektor in auswahl:
         fig.add_trace(go.Scatter(
             x=jahre,
             y=df[sektor],
@@ -821,29 +828,32 @@ elif menu == "Klima":
             name=sektor
         ))
     
-    # Zielpunkte für 2030
-    for sektor, ziel in ziele_2030.items():
-        fig.add_trace(go.Scatter(
-            x=[2030],
-            y=[ziel],
-            mode="markers+text",
-            marker=dict(symbol="x", size=12, color="green"),
-            name=f"{sektor} Ziel 2030",
-            text=[f"{sektor} Ziel"],
-            textposition="top center",
-            showlegend=False
-        ))
+    # Zielmarken
+    for sektor in auswahl:
+        ziel = ziele_2030.get(sektor)
+        if ziel:
+            fig.add_trace(go.Scatter(
+                x=[2030],
+                y=[ziel],
+                mode="markers+text",
+                marker=dict(symbol="x", size=12, color="green"),
+                name=f"{sektor} Ziel 2030",
+                text=[f"{sektor} Ziel"],
+                textposition="top center",
+                showlegend=False
+            ))
     
     # Layout
     fig.update_layout(
-        title="Treibhausgasemissionen nach Sektor in Deutschland (1990–2024) mit 2030-Zielen",
+        title="Treibhausgasemissionen nach Sektor (1990–2024) inkl. Ziele 2030",
         xaxis_title="Jahr",
         yaxis_title="Emissionen (Mio. t CO₂e)",
         height=700,
-        legend=dict(x=0.01, y=1.1, orientation="h")
+        legend=dict(x=0.01, y=1.12, orientation="h")
     )
     
-    fig.show()
+    st.plotly_chart(fig, use_container_width=True)
+
 
 
 # ---------------------
