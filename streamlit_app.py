@@ -499,7 +499,7 @@ elif menu == "Energie":
     import pandas as pd
     import plotly.graph_objects as go
     
-    # Daten definieren
+    # Daten vorbereiten
     jahre = [1989, 1990, 1995, 2000, 2005, 2010, 2015, 2019, 2020, 2021, 2022, 2023, 2024]
     
     data = {
@@ -513,11 +513,11 @@ elif menu == "Energie":
     
     df_abraum = pd.DataFrame(data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
     
-    # Revierauswahl
-    st.title("Abraum-Mengen in deutschen Braunkohlerevieren (1989–2024)")
-    auswahl = st.multiselect("Wähle ein oder mehrere Reviere", options=df_abraum.columns[1:], default=["Summe"])
+    # Revierauswahl OHNE Summe
+    revier_liste = [col for col in df_abraum.columns if col not in ["Jahr", "Summe"]]
+    auswahl = st.multiselect("🔍 Wähle Reviere für den Vergleich", options=revier_liste, default=["Rheinland", "Lausitz"])
     
-    # Plotly-Grafik
+    # 📊 Hauptgrafik für ausgewählte Reviere
     fig = go.Figure()
     for revier in auswahl:
         fig.add_trace(go.Scatter(
@@ -527,16 +527,37 @@ elif menu == "Energie":
             name=revier
         ))
     
-    # Layout
     fig.update_layout(
         title="Abraum-Menge nach Revier (in Mio. m³)",
         xaxis_title="Jahr",
         yaxis_title="Abraum [Mio. m³]",
         legend=dict(x=0.01, y=1.1, orientation="h"),
-        height=600
+        height=550
     )
     
     st.plotly_chart(fig)
+    
+    # ➕ Separates Kästchen für "Summe"
+    with st.container():
+        st.markdown("### Gesamt-Abraum über alle Reviere (Summe)")
+        fig_summe = go.Figure()
+        fig_summe.add_trace(go.Scatter(
+            x=df_abraum["Jahr"],
+            y=df_abraum["Summe"],
+            mode="lines+markers",
+            name="Summe",
+            line=dict(color="black", width=4)
+        ))
+    
+        fig_summe.update_layout(
+            xaxis_title="Jahr",
+            yaxis_title="Abraum [Mio. m³]",
+            height=400,
+            showlegend=False
+        )
+    
+        st.plotly_chart(fig_summe)
+
 
 
 
