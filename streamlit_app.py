@@ -168,44 +168,72 @@ elif menu == "Politisches Commitment":
 elif menu == "Energie":
     import streamlit as st
     import pandas as pd
-    import plotly.express as px
+    import plotly.graph_objects as go
     
-    # Excel laden
+    # Excel-Datei laden
     df = pd.read_excel("Braunkohle-im-Ueberblick-1.xlsx", sheet_name="Überblick", header=None)
     
-    # Zeilen 51–54 = Kategorien
-    df_selected = df.iloc[51:55]
+    # Zeilen extrahieren:
+    # Zeile 56 = Bruttostrom Braunkohle (Mio. t SKE)
+    # Zeile 57 = Anteil Braunkohle am Gesamtstrom (%)
+    braunkohle_abs = df.iloc[56]
+    braunkohle_anteil = df.iloc[57]
     
-    # Spalten bereinigen (erste vier beschreibende Spalten entfernen)
-    df_clean = df_selected.drop(columns=[0, 1, 2, 3], errors="ignore")
+    # Unnötige Textspalten entfernen
+    for s in [braunkohle_abs, braunkohle_anteil]:
+        s.drop(labels=[0, 1, 2, 3], errors='ignore', inplace=True)
     
-    # Kategoriennamen zuweisen
-    df_clean.index = ["Energie", "Klima", "Politisches Commitment", "Strukturwandel"]
+    # Jahreszahlen (Spaltenüberschriften)
+    jahre = pd.to_numeric(braunkohle_abs.index, errors='coerce')
     
-    # Spalten in Jahreszahlen umwandeln
-    df_clean.columns = pd.to_numeric(df_clean.columns, errors="coerce")
-    df_clean = df_clean.loc[:, df_clean.columns.notnull()]
+    # Werte extrahieren und bereinigen
+    werte_abs = pd.to_numeric(braunkohle_abs.values, errors='coerce')
+    werte_anteil = pd.to_numeric(braunkohle_anteil.values, errors='coerce')
     
-    # Alle Werte numerisch machen
-    df_clean = df_clean.apply(pd.to_numeric, errors="coerce")
+    # In DataFrame umwandeln
+    df_plot = pd.DataFrame({
+        "Jahr": jahre,
+        "Braunkohle (Mio. t SKE)": werte_abs,
+        "Anteil Braunkohle (%)": werte_anteil
+    }).dropna()
     
-    # Transponieren für Zeitreihe
-    df_long = df_clean.T.reset_index().rename(columns={"index": "Jahr"})
-    df_long = df_long.melt(id_vars="Jahr", var_name="Kategorie", value_name="Wert")
+    # Diagramm mit zwei Y-Achsen
+    fig = go.Figure()
     
-    # Diagramm
-    fig = px.line(
-        df_long,
-        x="Jahr",
-        y="Wert",
-        color="Kategorie",
-        title="Entwicklung nach Kategorien (Braunkohle im Überblick)",
-        labels={"Wert": "Indexwert / Anteil", "Jahr": "Jahr"}
+    # Balken für absolute Strommenge
+    fig.add_trace(go.Bar(
+        x=df_plot["Jahr"],
+        y=df_plot["Braunkohle (Mio. t SKE)"],
+        name="Braunkohle (Mio. t SKE)",
+        yaxis="y1",
+        marker_color="cornflowerblue"
+    ))
+    
+    # Linie für Anteil
+    fig.add_trace(go.Scatter(
+        x=df_plot["Jahr"],
+        y=df_plot["Anteil Braunkohle (%)"],
+        name="Anteil Braunkohle (%)",
+        yaxis="y2",
+        mode="lines+markers",
+        line=dict(color="crimson", width=2)
+    ))
+    
+    # Layout mit 2 Achsen
+    fig.update_layout(
+        title="Bruttostromerzeugung aus Braunkohle & Anteil am Gesamtstrom",
+        xaxis=dict(title="Jahr"),
+        yaxis=dict(title="Braunkohle (Mio. t SKE)", side="left"),
+        yaxis2=dict(
+            title="Anteil Braunkohle (%)",
+            overlaying="y",
+            side="right"
+        ),
+        legend=dict(x=0.01, y=0.99),
+        height=600
     )
     
-    fig.update_layout(height=600)
-    
-    # Anzeige in Streamlit
+    # In Streamlit anzeigen
     st.plotly_chart(fig, use_container_width=True)
 
 
