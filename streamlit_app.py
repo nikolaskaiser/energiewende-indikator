@@ -660,3 +660,49 @@ elif menu == "Klima":
 elif menu == "Strukturwandelinvestitionen":
     st.title("🏗️ Strukturwandel-Investitionen")
     st.markdown("Diese Seite ist noch leer und kann später ergänzt werden.")
+    #
+    #Beschäftigte
+    #
+    import streamlit as st
+    import pandas as pd
+    import plotly.graph_objects as go
+    
+    # Jahresreihe wie zuvor
+    jahre = [1989, 1990, 1995, 2000, 2005, 2010, 2015, 2019, 2020, 2021, 2022, 2023, 2024]
+    
+    # Beschäftigtenzahlen (zum 31.12.)
+    beschaeftigte_data = {
+        "Rheinland": [15565, 15316, 13072, 10430, 11105, 11606, 9410, 9785, 9418, 8481, 7676, 7508, 7082],
+        "Helmstedt": [1693, 1658, 1176, 703, 665, 541, 453, 101, 53, 53, 38, 25, 9],
+        "Hessen": [637, 474, 105, 72, 1, None, None, None, None, None, None, None, None],
+        "Bayern": [5, 5, 5, 5, 5, None, None, None, None, None, None, None, None],
+        "Lausitz": [79016, 65478, 19248, 7081, 8881, 8049, 8316, 8116, 7822, 7362, 7675, 7887, 7333],
+        "Mitteldeutschland": [59815, 46796, 6675, 2996, 2642, 2508, 2565, 2334, 2190, 2052, 1827, 1781, 1729],
+        "Summe": [156731, 129727, 40281, 21287, 23299, 22704, 20744, 20336, 19483, 17948, 17216, 17201, 16153]
+    }
+    
+    df_jobs = pd.DataFrame(beschaeftigte_data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    
+    # Auswahl Dropdown
+    st.title("Beschäftigtenzahlen in deutschen Braunkohlerevieren (1989–2024)")
+    auswahl = st.multiselect("👷‍♀️ Beschäftigte in Revier auswählen", options=df_jobs.columns[1:], default=["Rheinland", "Lausitz", "Summe"])
+    
+    # Plot
+    fig = go.Figure()
+    for revier in auswahl:
+        fig.add_trace(go.Scatter(
+            x=df_jobs["Jahr"],
+            y=df_jobs[revier],
+            mode="lines+markers",
+            name=revier
+        ))
+    
+    fig.update_layout(
+        title="Beschäftigte in der Braunkohlewirtschaft (jeweils 31.12.)",
+        xaxis_title="Jahr",
+        yaxis_title="Anzahl Beschäftigte",
+        legend=dict(x=0.01, y=1.1, orientation="h"),
+        height=600
+    )
+    
+    st.plotly_chart(fig)
