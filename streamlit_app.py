@@ -417,8 +417,9 @@ elif menu == "Energie":
     
        
 
-
+    #
     #ee anteil am verbrauch
+    #
     # ----------- Daten einlesen (angepasst an deine Excel-Struktur) -----------
     df = pd.read_excel("lak-download (4).xlsx", sheet_name="LAK", skiprows=5)
     df.columns = ['Land', 'Jahr', 'EE_Anteil_Prozent']
@@ -486,6 +487,52 @@ elif menu == "Energie":
         yaxis_title="Anteil (%)",
         yaxis_range=[0, max(100, df_land['EE_Anteil_Prozent'].max() + 20)],
         showlegend=True,
+        height=600
+    )
+    
+    st.plotly_chart(fig)
+
+    #
+    #Abraum
+    #
+    import streamlit as st
+    import pandas as pd
+    import plotly.graph_objects as go
+    
+    # Daten definieren
+    jahre = [1989, 1990, 1995, 2000, 2005, 2010, 2015, 2019, 2020, 2021, 2022, 2023, 2024]
+    
+    data = {
+        "Rheinland": [427.3, 433.5, 543.3, 445.7, 454.5, 469.1, 446.1, 355.3, 306.3, 247.3, 235.5, 201.7, 191.2],
+        "Helmstedt": [12.7, 12.1, 11.8, 15.6, 14.4, 6.8, 1.1, None, None, None, None, None, None],
+        "Hessen":    [3.5, 2.3, 0.6, 0.5, None, None, None, None, None, None, None, None, None],
+        "Lausitz":   [939.4, 827.1, 375.3, 341.0, 417.9, 406.3, 370.5, 329.6, 265.1, 274.6, 302.5, 283.4, 219.0],
+        "Mitteldeutschland": [397.6, 312.8, 37.3, 45.6, 75.6, 66.6, 70.1, 53.8, 42.1, 45.6, 52.9, 51.0, 39.9],
+        "Summe":     [1780.5, 1587.9, 968.4, 848.4, 962.5, 948.8, 887.8, 738.8, 613.6, 567.5, 590.925, 536.1, 450.1]
+    }
+    
+    df_abraum = pd.DataFrame(data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    
+    # Revierauswahl
+    st.title("Abraum-Mengen in deutschen Braunkohlerevieren (1989–2024)")
+    auswahl = st.multiselect("Wähle ein oder mehrere Reviere", options=df_abraum.columns[1:], default=["Summe"])
+    
+    # Plotly-Grafik
+    fig = go.Figure()
+    for revier in auswahl:
+        fig.add_trace(go.Scatter(
+            x=df_abraum["Jahr"],
+            y=df_abraum[revier],
+            mode="lines+markers",
+            name=revier
+        ))
+    
+    # Layout
+    fig.update_layout(
+        title="Abraum-Menge nach Revier (in Mio. m³)",
+        xaxis_title="Jahr",
+        yaxis_title="Abraum [Mio. m³]",
+        legend=dict(x=0.01, y=1.1, orientation="h"),
         height=600
     )
     
