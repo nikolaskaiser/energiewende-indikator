@@ -661,7 +661,7 @@ elif menu == "Energie":
     }
     
     df = pd.DataFrame(netz_km, index=jahre).reset_index().rename(columns={"index": "Jahr"})
-    st.title("Stromkreislängen in Deutschland (2014–2024)")
+    
     
     # Plot erstellen
     fig = go.Figure()
