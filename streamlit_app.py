@@ -170,71 +170,64 @@ elif menu == "Energie":
     import pandas as pd
     import plotly.graph_objects as go
     
-    # Excel-Datei laden
-    df = pd.read_excel("Braunkohle-im-Ueberblick-1.xlsx", sheet_name="Überblick", header=None)
+    # Aktualisierte Daten mit korrekten Jahren
+    df = pd.DataFrame({
+        "Jahr": [1989, 1990, 1995, 2000, 2005, 2010, 2015, 2019, 2020, 2021, 2022, 2023, 2024],
+        "Bruttostrom_TWh": [559.9, 549.9, 536.8, 576.6, 622.7, 632.8, 647.0,
+                            608.2, 574.7, 587.1, 577.9, 511.3, 497.3],
+        "Braunkohle_TWh": [180.4, 170.9, 142.6, 148.3, 154.1, 145.9, 154.5,
+                           114.0, 91.7, 110.1, 116.2, 86.3, 79.2],
+        "Braunkohle_Anteil_%": [32.2, 31.1, 26.6, 25.7, 24.7, 23.1, 23.9,
+                                18.7, 16.0, 18.8, 20.1, 16.9, 15.9]
+    })
     
-    # Zeilen extrahieren:
-    # Zeile 56 = Bruttostrom Braunkohle (Mio. t SKE)
-    # Zeile 57 = Anteil Braunkohle am Gesamtstrom (%)
-    braunkohle_abs = df.iloc[56]
-    braunkohle_anteil = df.iloc[57]
+    zieljahr = 2038
     
-    # Unnötige Textspalten entfernen
-    for s in [braunkohle_abs, braunkohle_anteil]:
-        s.drop(labels=[0, 1, 2, 3], errors='ignore', inplace=True)
-    
-    # Jahreszahlen (Spaltenüberschriften)
-    jahre = pd.to_numeric(braunkohle_abs.index, errors='coerce')
-    
-    # Werte extrahieren und bereinigen
-    werte_abs = pd.to_numeric(braunkohle_abs.values, errors='coerce')
-    werte_anteil = pd.to_numeric(braunkohle_anteil.values, errors='coerce')
-    
-    # In DataFrame umwandeln
-    df_plot = pd.DataFrame({
-        "Jahr": jahre,
-        "Braunkohle (Mio. t SKE)": werte_abs,
-        "Anteil Braunkohle (%)": werte_anteil
-    }).dropna()
-    
-    # Diagramm mit zwei Y-Achsen
+    # Plot erstellen
     fig = go.Figure()
     
-    # Balken für absolute Strommenge
     fig.add_trace(go.Bar(
-        x=df_plot["Jahr"],
-        y=df_plot["Braunkohle (Mio. t SKE)"],
-        name="Braunkohle (Mio. t SKE)",
-        yaxis="y1",
-        marker_color="cornflowerblue"
+        x=df["Jahr"],
+        y=df["Braunkohle_TWh"],
+        name="Braunkohle-Strom (TWh)",
+        marker_color="firebrick",
+        yaxis="y1"
     ))
     
-    # Linie für Anteil
     fig.add_trace(go.Scatter(
-        x=df_plot["Jahr"],
-        y=df_plot["Anteil Braunkohle (%)"],
-        name="Anteil Braunkohle (%)",
-        yaxis="y2",
+        x=df["Jahr"],
+        y=df["Braunkohle_Anteil_%"],
         mode="lines+markers",
-        line=dict(color="crimson", width=2)
+        name="Braunkohle-Anteil (%)",
+        line=dict(color="royalblue", width=3, dash="dash"),
+        yaxis="y2"
     ))
     
-    # Layout mit 2 Achsen
+    fig.add_trace(go.Scatter(
+        x=[zieljahr],
+        y=[0],
+        mode="markers+text",
+        name=f"Ziel {zieljahr}",
+        marker=dict(color="green", size=12),
+        text=["Ziel: 0 TWh"],
+        textposition="top center",
+        yaxis="y1"
+    ))
+    
     fig.update_layout(
-        title="Bruttostromerzeugung aus Braunkohle & Anteil am Gesamtstrom",
+        title="Braunkohlestrom in Deutschland (1989–2024) – absolut & relativ",
         xaxis=dict(title="Jahr"),
-        yaxis=dict(title="Braunkohle (Mio. t SKE)", side="left"),
-        yaxis2=dict(
-            title="Anteil Braunkohle (%)",
-            overlaying="y",
-            side="right"
-        ),
-        legend=dict(x=0.01, y=0.99),
+        yaxis=dict(title="Braunkohle-Strom (TWh)", side="left", showgrid=False),
+        yaxis2=dict(title="Anteil Braunkohle (%)", overlaying="y", side="right",
+                    showgrid=False, range=[0, max(df["Braunkohle_Anteil_%"]) + 5]),
+        barmode='group',
+        legend=dict(x=0.01, y=1.1, orientation="h"),
         height=600
     )
     
     # In Streamlit anzeigen
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig)
+
 
 
     # ----------------------------
