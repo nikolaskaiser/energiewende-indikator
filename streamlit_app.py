@@ -344,7 +344,7 @@ elif menu == "Energie":
     show_deutschland = st.checkbox("Deutschland gesamt anzeigen")
 
     
-     # ----------------------------
+    # ----------------------------
     # Plot erstellen
     # ----------------------------
     fig = go.Figure()
@@ -651,6 +651,7 @@ elif menu == "Energie":
     #
     import pandas as pd
     import plotly.graph_objects as go
+    import streamlit as st
     
     # Daten (in Millionen km)
     jahre = list(range(2014, 2025))
@@ -660,13 +661,24 @@ elif menu == "Energie":
         "Hoch-/Höchstspannung": [0.131, 0.133, 0.131, 0.131, 0.131, 0.132, 0.132, 0.133, 0.133, 0.134, 0.134]
     }
     
+    # DataFrame
     df = pd.DataFrame(netz_km, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    df["Gesamtlänge"] = df[["Niederspannung", "Mittelspannung", "Hoch-/Höchstspannung"]].sum(axis=1)
     
+    # Streamlit UI
+    st.title("Stromkreislängen in Deutschland (2014–2024)")
+    st.markdown("Vergleich verschiedener Spannungsebenen – inklusive Gesamtleitungslänge.")
     
-    # Plot erstellen
+    auswahl = st.multiselect(
+        "Wähle Spannungsebenen zum Vergleich",
+        options=list(netz_km.keys()),
+        default=list(netz_km.keys())
+    )
+    
+    # Plot
     fig = go.Figure()
     
-    for ebene in df.columns[1:]:
+    for ebene in auswahl:
         fig.add_trace(go.Scatter(
             x=df["Jahr"],
             y=df[ebene],
@@ -674,16 +686,26 @@ elif menu == "Energie":
             name=ebene
         ))
     
+    # Gesamtlänge immer anzeigen
+    fig.add_trace(go.Scatter(
+        x=df["Jahr"],
+        y=df["Gesamtlänge"],
+        mode="lines+markers",
+        name="Gesamtlänge",
+        line=dict(color="black", dash="dot")
+    ))
+    
     # Layout
     fig.update_layout(
-        title="Stromkreislängen in Deutschland nach Spannungsebene (2014–2024)",
+        title="Stromkreislängen nach Spannungsebene (inkl. Gesamtlänge)",
         xaxis_title="Jahr",
         yaxis_title="Netzlänge [Mio. km]",
         legend=dict(x=0.01, y=1.1, orientation="h"),
         height=600
     )
     
-    fig.show()
+    st.plotly_chart(fig)
+
 
 
 
