@@ -538,9 +538,51 @@ elif menu == "Energie":
     
     st.plotly_chart(fig)
 
-
-
-
+    #
+    #Fördermenge Braunkohle
+    #
+    import streamlit as st
+    import pandas as pd
+    import plotly.graph_objects as go
+    
+    # Jahresreihe
+    jahre = [1989, 1990, 1995, 2000, 2005, 2010, 2015, 2019, 2020, 2021, 2022, 2023, 2024]
+    
+    # Förderdaten in Mio. Tonnen
+    foerderung_data = {
+        "Rheinland": [104.2, 102.2, 100.2, 91.9, 97.3, 90.7, 95.2, 64.8, 51.4, 62.6, 65.3, 48.2, 43.9],
+        "Helmstedt": [4.4, 4.3, 4.1, 4.1, 2.1, 2.0, 1.5, None, None, None, None, None, None],
+        "Hessen": [1.2, 1.0, 0.2, 0.2, None, None, None, None, None, None, None, None, None],
+        "Bayern": [0.1, 0.1, 0.0, 0.0, 0.0, None, None, None, None, None, None, None, None],
+        "Lausitz": [195.1, 168.0, 70.7, 55.0, 59.4, 56.7, 62.5, 52.0, 43.2, 46.8, 48.5, 41.7, 37.8],
+        "Mitteldeutschland": [105.7, 80.9, 17.6, 16.4, 19.1, 20.0, 18.9, 14.5, 12.8, 16.9, 17.0, 12.3, 10.2],
+        "Summe": [410.7, 356.5, 192.7, 167.7, 177.9, 169.4, 178.1, 131.3, 107.4, 126.3, 130.8, 102.3, 91.9]
+    }
+    
+    df_foerderung = pd.DataFrame(foerderung_data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    
+    # Auswahl der Regionen (alle außer "Jahr")
+    auswahl = st.multiselect("📦 Wähle Reviere zur Anzeige der Braunkohleförderung", options=df_foerderung.columns[1:], default=["Rheinland", "Lausitz", "Summe"])
+    
+    # Plot
+    fig = go.Figure()
+    for revier in auswahl:
+        fig.add_trace(go.Scatter(
+            x=df_foerderung["Jahr"],
+            y=df_foerderung[revier],
+            mode="lines+markers",
+            name=revier
+        ))
+    
+    fig.update_layout(
+        title="Fördermenge von Braunkohle nach Revier (in Mio. Tonnen)",
+        xaxis_title="Jahr",
+        yaxis_title="Förderung [Mio. t]",
+        legend=dict(x=0.01, y=1.1, orientation="h"),
+        height=600
+    )
+    
+    st.plotly_chart(fig)
 
 # ---------------------
 # Seite: Klima
