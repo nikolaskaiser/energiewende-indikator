@@ -415,8 +415,6 @@ elif menu == "Energie":
     
     st.plotly_chart(fig)
     
-       
-
     #
     #ee anteil am verbrauch
     #
@@ -580,6 +578,69 @@ elif menu == "Energie":
         xaxis_title="Jahr",
         yaxis_title="Förderung [Mio. t]",
         legend=dict(x=0.01, y=1.1, orientation="h"),
+        height=600
+    )
+    
+    st.plotly_chart(fig)
+
+    #
+    #EE installierte Leistung
+    #
+    import pandas as pd
+    import plotly.graph_objects as go
+    import streamlit as st
+    
+    # Daten (GW)
+    jahre = list(range(2014, 2025))
+    data = {
+        "Photovoltaik": [38.343, 39.799, 41.275, 43.300, 45.158, 48.864, 54.403, 60.038, 67.783, 83.159, 100.200],
+        "Wind an Land": [37.620, 41.244, 45.384, 50.291, 52.328, 53.187, 54.326, 55.904, 58.014, 60.990, 63.600],
+        "Wind auf See": [0.994, 3.297, 4.150, 5.427, 6.393, 7.555, 7.787, 7.807, 8.149, 8.473, 9.215]
+    }
+    
+    # Politische Ziele für 2030 laut EEG
+    ziele_2030 = {
+        "Photovoltaik": 215,
+        "Wind an Land": 115,
+        "Wind auf See": 30
+    }
+    
+    # DataFrame aufbauen
+    df = pd.DataFrame(data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    
+    # Streamlit UI
+    st.title("Installierte Leistung von PV & Wind (2014–2024)")
+    auswahl = st.multiselect("Wähle Technologien zum Vergleich", options=list(data.keys()), default=list(data.keys()))
+    
+    # Plot erstellen
+    fig = go.Figure()
+    
+    # Linien für reale Daten
+    for tech in auswahl:
+        fig.add_trace(go.Scatter(
+            x=df["Jahr"],
+            y=df[tech],
+            mode="lines+markers",
+            name=tech
+        ))
+    
+    # Zielmarken für 2030
+    for tech in auswahl:
+        fig.add_trace(go.Scatter(
+            x=[2023, 2030],
+            y=[ziele_2030[tech]] * 2,
+            mode="lines",
+            name=f"Ziel 2030: {tech} ({ziele_2030[tech]} GW)",
+            line=dict(dash="dash", width=2),
+            showlegend=True
+        ))
+    
+    # Layout
+    fig.update_layout(
+        title="Installierte Leistung (EEG-Ziele vs. Entwicklung)",
+        xaxis_title="Jahr",
+        yaxis_title="Installierte Leistung [GW]",
+        legend=dict(x=0.01, y=1.15, orientation="h"),
         height=600
     )
     
