@@ -168,52 +168,46 @@ elif menu == "Politisches Commitment":
 elif menu == "Energie":
     import streamlit as st
     import pandas as pd
-    import matplotlib.pyplot as plt
+    import plotly.express as px
     
-    # Excel-Datei laden
+    # Excel laden
     df = pd.read_excel("Braunkohle-im-Ueberblick-1.xlsx", sheet_name="Überblick", header=None)
     
-    # Daten extrahieren (Zeile 56 = Bruttostrom, Zeile 57 = Anteil)
-    strom_raw = df.iloc[56]
-    anteil_raw = df.iloc[57]
+    # Zeilen 51–54 = Kategorien
+    df_selected = df.iloc[51:55]
     
-    # Unbrauchbare Spalten entfernen
-    strom_clean = strom_raw.drop(labels=[0, 1, 2, 3], errors='ignore')
-    anteil_clean = anteil_raw.drop(labels=[0, 1, 2, 3], errors='ignore')
+    # Spalten bereinigen (erste vier beschreibende Spalten entfernen)
+    df_clean = df_selected.drop(columns=[0, 1, 2, 3], errors="ignore")
     
-    # Jahreszahlen als Spaltennamen
-    years = pd.to_numeric(strom_clean.index, errors='coerce')
-    strom_values = pd.to_numeric(strom_clean.values, errors='coerce')
-    anteil_values = pd.to_numeric(anteil_clean.values, errors='coerce')
+    # Kategoriennamen zuweisen
+    df_clean.index = ["Energie", "Klima", "Politisches Commitment", "Strukturwandel"]
     
-    # Kombinierte DataFrame
-    data = pd.DataFrame({
-        "Jahr": years,
-        "Bruttostrom aus Braunkohle (Mio. t SKE)": strom_values,
-        "Anteil am Primärenergieverbrauch (%)": anteil_values
-    }).dropna()
+    # Spalten in Jahreszahlen umwandeln
+    df_clean.columns = pd.to_numeric(df_clean.columns, errors="coerce")
+    df_clean = df_clean.loc[:, df_clean.columns.notnull()]
     
-    # Diagramm zeichnen
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    # Alle Werte numerisch machen
+    df_clean = df_clean.apply(pd.to_numeric, errors="coerce")
     
-    # Balken: Bruttostrom
-    ax1.bar(data["Jahr"], data["Bruttostrom aus Braunkohle (Mio. t SKE)"], alpha=0.6, label="Bruttostrom (Mio. t SKE)")
-    ax1.set_xlabel("Jahr")
-    ax1.set_ylabel("Bruttostrom (Mio. t SKE)", color="blue")
-    ax1.tick_params(axis='y', labelcolor="blue")
+    # Transponieren für Zeitreihe
+    df_long = df_clean.T.reset_index().rename(columns={"index": "Jahr"})
+    df_long = df_long.melt(id_vars="Jahr", var_name="Kategorie", value_name="Wert")
     
-    # Linie: Anteil in %
-    ax2 = ax1.twinx()
-    ax2.plot(data["Jahr"], data["Anteil am Primärenergieverbrauch (%)"], color="red", label="Anteil (%)", linewidth=2)
-    ax2.set_ylabel("Anteil am Primärenergieverbrauch (%)", color="red")
-    ax2.tick_params(axis='y', labelcolor="red")
+    # Diagramm
+    fig = px.line(
+        df_long,
+        x="Jahr",
+        y="Wert",
+        color="Kategorie",
+        title="Entwicklung nach Kategorien (Braunkohle im Überblick)",
+        labels={"Wert": "Indexwert / Anteil", "Jahr": "Jahr"}
+    )
     
-    # Titel & Layout
-    fig.suptitle("Bruttostromerzeugung aus Braunkohle und Anteil am Primärenergieverbrauch")
-    fig.tight_layout()
+    fig.update_layout(height=600)
     
-    # In Streamlit anzeigen
-    st.pyplot(fig)
+    # Anzeige in Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
 
     # ----------------------------
     # Alle Daten
