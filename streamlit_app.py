@@ -912,6 +912,56 @@ elif menu == "Klima":
     
     st.plotly_chart(fig, use_container_width=True)
 
+    #
+    #THG Weltweit
+    #
+
+    import streamlit as st
+    import pandas as pd
+    import plotly.express as px
+    
+    # Daten (Top 20 Länder + Deutschland hervorgehoben)
+    data = {
+        "Land": [
+            "China", "USA", "Indien", "Russland", "Japan", "Iran", "Indonesien",
+            "Saudi-Arabien", "Deutschland", "Kanada", "Südkorea", "Mexiko",
+            "Brasilien", "Türkei", "Südafrika", "Australien", "Vietnam",
+            "Vereinigtes Königreich", "Polen", "Malaysia"
+        ],
+        "CO₂-Ausstoß (Mio. t)": [
+            13259.64, 4682.04, 2955.18, 2069.5, 944.76, 778.8, 674.54,
+            622.91, 582.95, 575.01, 573.54, 487.09, 479.5, 438.32,
+            397.37, 373.62, 372.95, 302.1, 286.91, 283.32
+        ]
+    }
+    
+    df = pd.DataFrame(data)
+    df["Hervorheben"] = df["Land"].apply(lambda x: "Deutschland" if x == "Deutschland" else "Andere")
+    
+    # Plot
+    fig = px.bar(
+        df.sort_values("CO₂-Ausstoß (Mio. t)", ascending=True),
+        x="CO₂-Ausstoß (Mio. t)",
+        y="Land",
+        color="Hervorheben",
+        color_discrete_map={"Deutschland": "crimson", "Andere": "lightgray"},
+        title="CO₂-Ausstoß weltweit (Top 20 Länder, 2023)"
+    )
+    
+    # Textausgabe
+    gesamt_emissionen = df["CO₂-Ausstoß (Mio. t)"].sum()
+    de_emissionen = df[df["Land"] == "Deutschland"]["CO₂-Ausstoß (Mio. t)"].values[0]
+    de_anteil = round(de_emissionen / gesamt_emissionen * 100, 2)
+    de_rang = df.sort_values("CO₂-Ausstoß (Mio. t)", ascending=False).reset_index().query("Land == 'Deutschland'").index[0] + 1
+    
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown(f"""
+    ### Deutschland im Vergleich
+    
+    - 💨 **Ausstoß**: {de_emissionen:.2f} Mio. t CO₂  
+    - 🌍 **Anteil (Top 20)**: **{de_anteil} %**
+    - 🥇 **Platzierung**: **Rang {de_rang}** unter den Top 20 Ländern
+    """)
 
 
 # ---------------------
