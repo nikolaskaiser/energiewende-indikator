@@ -773,8 +773,6 @@ elif menu == "Energie":
 # ---------------------
 elif menu == "Klima":
     st.title("🌡️ Klima – CO₂-Emissionen der Stromerzeugung")
-    st.markdown("Hier kannst du Emissionsdaten aus der Stromerzeugung anzeigen.")
-    # Platz für Emissions-Visualisierung
 
     # ----------------------------
     # 📉 CO₂-Emissionen Stromerzeugung pro Bundesland
