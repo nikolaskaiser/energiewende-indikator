@@ -646,6 +646,45 @@ elif menu == "Energie":
     
     st.plotly_chart(fig)
 
+    #
+    #Stromnetze
+    #
+    import pandas as pd
+    import plotly.graph_objects as go
+    
+    # Daten (in Millionen km)
+    jahre = list(range(2014, 2025))
+    netz_km = {
+        "Niederspannung": [1.185, 1.193, 1.200, 1.206, 1.213, 1.218, 1.231, 1.240, 1.247, 1.253, 1.263],
+        "Mittelspannung": [0.516, 0.518, 0.522, 0.523, 0.524, 0.526, 0.529, 0.531, 0.534, 0.536, 0.539],
+        "Hoch-/Höchstspannung": [0.131, 0.133, 0.131, 0.131, 0.131, 0.132, 0.132, 0.133, 0.133, 0.134, 0.134]
+    }
+    
+    df = pd.DataFrame(netz_km, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    st.title("Stromkreislängen in Deutschland (2014–2024)")
+    
+    # Plot erstellen
+    fig = go.Figure()
+    
+    for ebene in df.columns[1:]:
+        fig.add_trace(go.Scatter(
+            x=df["Jahr"],
+            y=df[ebene],
+            mode="lines+markers",
+            name=ebene
+        ))
+    
+    # Layout
+    fig.update_layout(
+        title="Stromkreislängen in Deutschland nach Spannungsebene (2014–2024)",
+        xaxis_title="Jahr",
+        yaxis_title="Netzlänge [Mio. km]",
+        legend=dict(x=0.01, y=1.1, orientation="h"),
+        height=600
+    )
+    
+    fig.show()
+
 
 
 
