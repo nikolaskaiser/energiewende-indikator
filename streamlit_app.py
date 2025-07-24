@@ -967,7 +967,7 @@ elif menu == "Klima":
 # ---------------------
 elif menu == "Strukturwandelinvestitionen":
     st.title("🏗️ Strukturwandel-Investitionen")
-    st.markdown("Diese Seite ist noch leer und kann später ergänzt werden.")
+
     #
     #Beschäftigte
     #
