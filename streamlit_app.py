@@ -706,7 +706,65 @@ elif menu == "Energie":
     
     st.plotly_chart(fig)
 
-
+    #
+    #Investitionen in Energieinfrastruktur
+    #
+    import streamlit as st
+    import pandas as pd
+    import plotly.graph_objects as go
+    
+    # Daten vorbereiten
+    jahre = list(range(2016, 2027))
+    daten = {
+        "Erzeugungsanlagen": [5.3, 4.2, 4.7, 4.8, 3.3, 3.5, 3.6, 3.8, 5.4, 5.2, 4.6],
+        "Fortleitungs- und Verteilungsanlagen": [6.7, 6.3, 6.9, 7.2, 8.8, 9.7, 11.4, 16.0, 22.2, 27.0, 28.0],
+        "Sonstiges": [0.9, 0.8, 0.7, 0.9, 1.1, 1.2, 2.0, 1.6, 1.4, 1.4, 1.4]
+    }
+    
+    # DataFrame
+    df = pd.DataFrame(daten, index=jahre).reset_index().rename(columns={"index": "Jahr"})
+    df["Gesamt"] = df[["Erzeugungsanlagen", "Fortleitungs- und Verteilungsanlagen", "Sonstiges"]].sum(axis=1)
+    
+    # Streamlit-Interface
+    st.title("Investitionen in Energieinfrastruktur in Deutschland")
+    st.markdown("**Dargestellt werden jährliche Investitionen in Mrd. € für verschiedene Anlagentypen**")
+    
+    auswahl = st.multiselect(
+        "Wähle Kategorien zum Vergleich",
+        options=["Erzeugungsanlagen", "Fortleitungs- und Verteilungsanlagen", "Sonstiges"],
+        default=["Erzeugungsanlagen", "Fortleitungs- und Verteilungsanlagen", "Sonstiges"]
+    )
+    
+    # Plot erstellen
+    fig = go.Figure()
+    
+    for kategorie in auswahl:
+        fig.add_trace(go.Scatter(
+            x=df["Jahr"],
+            y=df[kategorie],
+            mode="lines+markers",
+            name=kategorie
+        ))
+    
+    # Gesamtsumme immer anzeigen
+    fig.add_trace(go.Scatter(
+        x=df["Jahr"],
+        y=df["Gesamt"],
+        mode="lines+markers",
+        name="Gesamt",
+        line=dict(color="black", dash="dot")
+    ))
+    
+    # Layout
+    fig.update_layout(
+        title="Investitionen in Energieanlagen (2016–2026)",
+        xaxis_title="Jahr",
+        yaxis_title="Investitionen (Mrd. €)",
+        legend=dict(x=0.01, y=1.1, orientation="h"),
+        height=600
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
 
 
