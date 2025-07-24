@@ -778,6 +778,73 @@ elif menu == "Klima":
     
     st.plotly_chart(fig_co2)
 
+    #
+    #THG Emissionen DE
+    #
+    import pandas as pd
+    import plotly.graph_objects as go
+    
+    # Jahre und Daten
+    jahre = [1990, 2000, 2010, 2020, 2021, 2022, 2023, 2024]
+    daten = {
+        "Energiewirtschaft": [474.772, 390.844, 372.637, 219.038, 246.421, 256.670, 202.582, 184.994],
+        "Industrie": [277.703, 202.598, 184.059, 172.577, 180.293, 164.365, 152.924, 153.007],
+        "Gebäude": [210.027, 166.790, 142.933, 122.497, 119.287, 110.515, 102.933, 100.536],
+        "Verkehr": [163.355, 180.586, 150.448, 146.386, 144.599, 147.691, 145.131, 143.055],
+        "Landwirtschaft": [84.989, 71.957, 67.980, 66.374, 64.911, 63.902, 62.960, 62.111],
+        "Sonstige": [41.550, 29.572, 12.192, 6.121, 5.915, 5.650, 5.490, 5.356]
+    }
+    
+    # Ziele für 2030 (Mio. t CO₂e)
+    ziele_2030 = {
+        "Energiewirtschaft": 108,
+        "Industrie": 118,
+        "Gebäude": 67,
+        "Verkehr": 85,
+        "Landwirtschaft": 56,
+        "Sonstige": 5
+    }
+    
+    # DataFrame erstellen
+    df = pd.DataFrame(daten, index=jahre)
+    df["Gesamt"] = df.sum(axis=1)
+    
+    # Plotly-Figur erstellen
+    fig = go.Figure()
+    
+    # Linien für jeden Sektor
+    for sektor in daten:
+        fig.add_trace(go.Scatter(
+            x=jahre,
+            y=df[sektor],
+            mode="lines+markers",
+            name=sektor
+        ))
+    
+    # Zielpunkte für 2030
+    for sektor, ziel in ziele_2030.items():
+        fig.add_trace(go.Scatter(
+            x=[2030],
+            y=[ziel],
+            mode="markers+text",
+            marker=dict(symbol="x", size=12, color="green"),
+            name=f"{sektor} Ziel 2030",
+            text=[f"{sektor} Ziel"],
+            textposition="top center",
+            showlegend=False
+        ))
+    
+    # Layout
+    fig.update_layout(
+        title="Treibhausgasemissionen nach Sektor in Deutschland (1990–2024) mit 2030-Zielen",
+        xaxis_title="Jahr",
+        yaxis_title="Emissionen (Mio. t CO₂e)",
+        height=700,
+        legend=dict(x=0.01, y=1.1, orientation="h")
+    )
+    
+    fig.show()
+
 
 # ---------------------
 # Seite: Strukturwandelinvestitionen
