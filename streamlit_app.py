@@ -166,7 +166,56 @@ elif menu == "Politisches Commitment":
 # Seite: Energie
 # ---------------------
 elif menu == "Energie":
-        # ----------------------------
+    import streamlit as st
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    
+    # Excel-Datei laden
+    df = pd.read_excel("Braunkohle-im-Ueberblick-1.xlsx", sheet_name="Überblick", header=None)
+    
+    # Daten extrahieren (Zeile 56 = Bruttostrom, Zeile 57 = Anteil)
+    strom_raw = df.iloc[56]
+    anteil_raw = df.iloc[57]
+    
+    # Unbrauchbare Spalten entfernen
+    strom_clean = strom_raw.drop(labels=[0, 1, 2, 3], errors='ignore')
+    anteil_clean = anteil_raw.drop(labels=[0, 1, 2, 3], errors='ignore')
+    
+    # Jahreszahlen als Spaltennamen
+    years = pd.to_numeric(strom_clean.index, errors='coerce')
+    strom_values = pd.to_numeric(strom_clean.values, errors='coerce')
+    anteil_values = pd.to_numeric(anteil_clean.values, errors='coerce')
+    
+    # Kombinierte DataFrame
+    data = pd.DataFrame({
+        "Jahr": years,
+        "Bruttostrom aus Braunkohle (Mio. t SKE)": strom_values,
+        "Anteil am Primärenergieverbrauch (%)": anteil_values
+    }).dropna()
+    
+    # Diagramm zeichnen
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+    
+    # Balken: Bruttostrom
+    ax1.bar(data["Jahr"], data["Bruttostrom aus Braunkohle (Mio. t SKE)"], alpha=0.6, label="Bruttostrom (Mio. t SKE)")
+    ax1.set_xlabel("Jahr")
+    ax1.set_ylabel("Bruttostrom (Mio. t SKE)", color="blue")
+    ax1.tick_params(axis='y', labelcolor="blue")
+    
+    # Linie: Anteil in %
+    ax2 = ax1.twinx()
+    ax2.plot(data["Jahr"], data["Anteil am Primärenergieverbrauch (%)"], color="red", label="Anteil (%)", linewidth=2)
+    ax2.set_ylabel("Anteil am Primärenergieverbrauch (%)", color="red")
+    ax2.tick_params(axis='y', labelcolor="red")
+    
+    # Titel & Layout
+    fig.suptitle("Bruttostromerzeugung aus Braunkohle und Anteil am Primärenergieverbrauch")
+    fig.tight_layout()
+    
+    # In Streamlit anzeigen
+    st.pyplot(fig)
+
+    # ----------------------------
     # Alle Daten
     # ----------------------------
     region_data = {
