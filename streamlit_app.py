@@ -562,6 +562,7 @@ elif menu == "Energie":
     df_foerderung = pd.DataFrame(foerderung_data, index=jahre).reset_index().rename(columns={"index": "Jahr"})
     
     # Auswahl der Regionen (alle außer "Jahr")
+    st.title("Fördermengen in deutschen Braunkohlerevieren (1989–2024)")
     auswahl = st.multiselect("📦 Wähle Reviere zur Anzeige der Braunkohleförderung", options=df_foerderung.columns[1:], default=["Rheinland", "Lausitz", "Summe"])
     
     # Plot
