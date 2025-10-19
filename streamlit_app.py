@@ -7,10 +7,147 @@ st.set_page_config(page_title="Energiewende-Indikator", layout="wide")
 # Sidebar-Menü
 menu = st.sidebar.selectbox(
     "Wähle eine Kategorie",
-    ["Indikator", "Politisches Commitment", "Energie", "Klima", "Strukturwandelinvestitionen"]
+    ["Indikator", "Politisches Commitment", "Energie", "Klima", "Strukturwandelinvestitionen", "Braunkohle"]
 )
+# ---------------------
+# Seite: Braunkohle
+# ---------------------
+# ---------------------
+# Seite: Braunkohle (Beschäftigte fix eingetragen)
+# ---------------------
+if menu == "Braunkohle":
+    st.title("Braunkohle in Daten")
+    st.markdown("Beschäftigte im Braunkohlesektor (nach Arbeitsort) – Zeitreihe 2010–2024")
 
+    import plotly.express as px
 
+    # === Daten direkt im Code ===
+    data = [
+        ["Cottbus, Stadt", 2010, 804.9],
+        ["Cottbus, Stadt", 2015, 831.6],
+        ["Cottbus, Stadt", 2019, 811.6],
+        ["Cottbus, Stadt", 2020, 782.2],
+        ["Cottbus, Stadt", 2021, 736.2],
+        ["Cottbus, Stadt", 2022, 767.5],
+        ["Cottbus, Stadt", 2023, 788.7],
+        ["Cottbus, Stadt", 2024, 733.3],
+        ["Landkreis Oberspreewald-Lausitz", 2010, 1610],
+        ["Landkreis Oberspreewald-Lausitz", 2015, 1663],
+        ["Landkreis Oberspreewald-Lausitz", 2019, 1623],
+        ["Landkreis Oberspreewald-Lausitz", 2020, 1564],
+        ["Landkreis Oberspreewald-Lausitz", 2021, 1472],
+        ["Landkreis Oberspreewald-Lausitz", 2022, 1535],
+        ["Landkreis Oberspreewald-Lausitz", 2023, 1577],
+        ["Landkreis Oberspreewald-Lausitz", 2024, 1467],
+        ["Landkreis Spree-Neiße", 2010, 3220],
+        ["Landkreis Spree-Neiße", 2015, 3326],
+        ["Landkreis Spree-Neiße", 2019, 3246],
+        ["Landkreis Spree-Neiße", 2020, 3129],
+        ["Landkreis Spree-Neiße", 2021, 2945],
+        ["Landkreis Spree-Neiße", 2022, 3070],
+        ["Landkreis Spree-Neiße", 2023, 3155],
+        ["Landkreis Spree-Neiße", 2024, 2933],
+        ["Landkreis Görlitz", 2010, 2415],
+        ["Landkreis Görlitz", 2015, 2495],
+        ["Landkreis Görlitz", 2019, 2435],
+        ["Landkreis Görlitz", 2020, 2347],
+        ["Landkreis Görlitz", 2021, 2209],
+        ["Landkreis Görlitz", 2022, 2303],
+        ["Landkreis Görlitz", 2023, 2366],
+        ["Landkreis Görlitz", 2024, 2200],
+        ["Landkreis Leipzig", 2010, 752.4],
+        ["Landkreis Leipzig", 2015, 769.5],
+        ["Landkreis Leipzig", 2019, 700.2],
+        ["Landkreis Leipzig", 2020, 657],
+        ["Landkreis Leipzig", 2021, 615.6],
+        ["Landkreis Leipzig", 2022, 548.1],
+        ["Landkreis Leipzig", 2023, 534.3],
+        ["Landkreis Leipzig", 2024, 518.7],
+        ["Burgenlandkreis", 2010, 1003.2],
+        ["Burgenlandkreis", 2015, 1026],
+        ["Burgenlandkreis", 2019, 933.6],
+        ["Burgenlandkreis", 2020, 876],
+        ["Burgenlandkreis", 2021, 820.8],
+        ["Burgenlandkreis", 2022, 730.8],
+        ["Burgenlandkreis", 2023, 712.4],
+        ["Burgenlandkreis", 2024, 691.6],
+        ["Landkreis Mansfeld-Südharz", 2010, 250.8],
+        ["Landkreis Mansfeld-Südharz", 2015, 256.5],
+        ["Landkreis Mansfeld-Südharz", 2019, 233.4],
+        ["Landkreis Mansfeld-Südharz", 2020, 219],
+        ["Landkreis Mansfeld-Südharz", 2021, 205.2],
+        ["Landkreis Mansfeld-Südharz", 2022, 182.7],
+        ["Landkreis Mansfeld-Südharz", 2023, 178.1],
+        ["Landkreis Mansfeld-Südharz", 2024, 172.9],
+        ["Saalekreis", 2010, 501.6],
+        ["Saalekreis", 2015, 513],
+        ["Saalekreis", 2019, 466.8],
+        ["Saalekreis", 2020, 438],
+        ["Saalekreis", 2021, 410.4],
+        ["Saalekreis", 2022, 365.4],
+        ["Saalekreis", 2023, 356.2],
+        ["Saalekreis", 2024, 345.8],
+        ["Städteregion Aachen", 2010, 1160.6],
+        ["Städteregion Aachen", 2015, 941],
+        ["Städteregion Aachen", 2019, 978.5],
+        ["Städteregion Aachen", 2020, 941.8],
+        ["Städteregion Aachen", 2021, 848.1],
+        ["Städteregion Aachen", 2022, 767.6],
+        ["Städteregion Aachen", 2023, 750.8],
+        ["Städteregion Aachen", 2024, 708.2],
+        ["Kreis Düren", 2010, 3481.8],
+        ["Kreis Düren", 2015, 2823],
+        ["Kreis Düren", 2019, 2935.5],
+        ["Kreis Düren", 2020, 2825.4],
+        ["Kreis Düren", 2021, 2544.3],
+        ["Kreis Düren", 2022, 2302.8],
+        ["Kreis Düren", 2023, 2252.4],
+        ["Kreis Düren", 2024, 2124.6],
+        ["Rhein-Erft-Kreis", 2010, 3481.8],
+        ["Rhein-Erft-Kreis", 2015, 2823],
+        ["Rhein-Erft-Kreis", 2019, 2935.5],
+        ["Rhein-Erft-Kreis", 2020, 2825.4],
+        ["Rhein-Erft-Kreis", 2021, 2544.3],
+        ["Rhein-Erft-Kreis", 2022, 2302.8],
+        ["Rhein-Erft-Kreis", 2023, 2252.4],
+        ["Rhein-Erft-Kreis", 2024, 2124.6],
+        ["Rhein-Kreis Neuss", 2010, 3481.8],
+        ["Rhein-Kreis Neuss", 2015, 2823],
+        ["Rhein-Kreis Neuss", 2019, 2935.5],
+        ["Rhein-Kreis Neuss", 2020, 2825.4],
+        ["Rhein-Kreis Neuss", 2021, 2544.3],
+        ["Rhein-Kreis Neuss", 2022, 2302.8],
+        ["Rhein-Kreis Neuss", 2023, 2252.4],
+        ["Rhein-Kreis Neuss", 2024, 2124.6],
+    ]
+
+    df = pd.DataFrame(data, columns=["Gebietseinheit", "Jahr", "Beschäftigte"])
+
+    # === Filter ===
+    all_regions = sorted(df["Gebietseinheit"].unique().tolist())
+    sel_regions = st.multiselect("Gebietseinheit(en) wählen", all_regions, default=all_regions[:5])
+
+    df_plot = df[df["Gebietseinheit"].isin(sel_regions)]
+
+    # === Plot ===
+    fig = px.line(
+        df_plot,
+        x="Jahr",
+        y="Beschäftigte",
+        color="Gebietseinheit",
+        markers=True,
+        title="Beschäftigte im Braunkohlesektor (nach Arbeitsort)"
+    )
+    fig.update_layout(
+        xaxis_title="Jahr",
+        yaxis_title="Anzahl Beschäftigte",
+        height=550,
+        legend_title_text=""
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    
 # ---------------------
 # Seite: Indikator
 # ---------------------
@@ -1014,3 +1151,4 @@ elif menu == "Strukturwandelinvestitionen":
     )
     
     st.plotly_chart(fig)
+
